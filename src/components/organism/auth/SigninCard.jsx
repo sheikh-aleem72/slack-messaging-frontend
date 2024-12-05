@@ -8,24 +8,54 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { LucideLoader2, TriangleAlert } from "lucide-react";
+import { FaCheck } from "react-icons/fa";
 
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const SigninCard = () => {
+export const SigninCard = ({
+  error,
+  isPending,
+  isSuccess,
+  signinForm,
+  setSigninForm,
+  validationError,
+  onSigninFormSubmit,
+}) => {
   const navigate = useNavigate();
-  const [signinForm, setSigninForm] = useState({
-    email: "",
-    password: "",
-  });
   return (
     <Card className="h-auto w-[420px]">
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
         <CardDescription>Sign in to access your account</CardDescription>
+
+        {validationError && (
+          <div className="bg-destructive/15 p-4 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
+            <TriangleAlert className="size-5" />
+            <p>{validationError.message}</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-destructive/15 p-4 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
+            <TriangleAlert className="size-5" />
+            <p>{error.message}</p>
+          </div>
+        )}
+
+        {isSuccess && (
+          <div className="bg-primary/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-primary mb-5">
+            <FaCheck className="size-5" />
+            <p>
+              Successfully signed in. You will be redirected to the home page in
+              a few seconds.
+              <LucideLoader2 className="animate-spin ml-2" />
+            </p>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
-        <form className="space-y-3">
+        <form className="space-y-3" onSubmit={onSigninFormSubmit}>
           <Input
             required
             type="email"
@@ -34,6 +64,7 @@ export const SigninCard = () => {
               setSigninForm({ ...signinForm, email: e.target.value })
             }
             value={signinForm.email}
+            disabled={isPending}
           />
 
           <Input
@@ -44,9 +75,15 @@ export const SigninCard = () => {
               setSigninForm({ ...signinForm, password: e.target.value })
             }
             value={signinForm.password}
+            disabled={isPending}
           />
 
-          <Button className="w-full" size="lg" disabled="false" type="submit">
+          <Button
+            className="w-full"
+            size="lg"
+            disabled={isPending}
+            type="submit"
+          >
             Sign In
           </Button>
         </form>
@@ -59,7 +96,7 @@ export const SigninCard = () => {
             className="text-sky-600 hover:underline cursor-pointer"
             onClick={() => navigate("/auth/signup")}
           >
-            Sign In
+            Sign Up
           </span>
         </p>
       </CardContent>

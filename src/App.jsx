@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { Auth } from "@/pages/Auth/Auth";
-import { SignupCard } from "@/components/organism/auth/SignupCard";
-import { SigninCard } from "@/components/organism/auth/SigninCard";
 import NotFound from "@/pages/NotFound/NotFound";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SignupContainer from "./components/organism/auth/signupContainer";
+import { SigninContainer } from "./components/organism/auth/SigninContainer";
+import { Toaster } from "./components/ui/toaster";
 
 function App() {
   const queryClient = new QueryClient();
@@ -25,12 +25,21 @@ function App() {
             path="/auth/signin"
             element={
               <Auth>
-                <SigninCard />
+                <SigninContainer />
+              </Auth>
+            }
+          />
+          <Route
+            path="/home"
+            element={
+              <Auth>
+                <h1>home</h1>
               </Auth>
             }
           />
           <Route path="/*" element={<NotFound />} />
         </Routes>
+        <Toaster />
       </QueryClientProvider>
     </>
   );
