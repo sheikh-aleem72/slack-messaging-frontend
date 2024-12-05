@@ -8,26 +8,55 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { LucideLoader2, TriangleAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { FaCheck } from "react-icons/fa";
 
-export const SignupCard = () => {
+export const SignupCard = ({
+  isPending,
+  isSuccess,
+  error,
+  signupForm,
+  setSignupForm,
+  onSignupFormSubmit,
+  validationError,
+}) => {
   const navigate = useNavigate();
-  const [signupForm, setSignupForm] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+
   return (
     <>
       <Card className="h-auto w-[420px]">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
           <CardDescription>Sign up to create your account</CardDescription>
+
+          {validationError && (
+            <div className="bg-destructive/15 p-4 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
+              <TriangleAlert className="size-5" />
+              <p>{validationError.message}</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-destructive/15 p-4 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
+              <TriangleAlert className="size-5" />
+              <p>{error.message}</p>
+            </div>
+          )}
+
+          {isSuccess && (
+            <div className="bg-primary/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-primary mb-5">
+              <FaCheck className="size-5" />
+              <p>
+                Successfully signed up. You will be redirected to the login page
+                in a few seconds.
+                <LucideLoader2 className="animate-spin ml-2" />
+              </p>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
-          <form className="space-y-3">
+          <form className="space-y-3" onSubmit={onSignupFormSubmit}>
             <Input
               required
               placeholder="Username"
@@ -36,6 +65,7 @@ export const SignupCard = () => {
                 setSignupForm({ ...signupForm, username: e.target.value })
               }
               value={signupForm.username}
+              disabled={isPending}
             />
 
             <Input
@@ -46,16 +76,18 @@ export const SignupCard = () => {
                 setSignupForm({ ...signupForm, email: e.target.value })
               }
               value={signupForm.email}
+              disabled={isPending}
             />
 
             <Input
               required
               placeholder="Password"
               type="password"
-              onChange={(e) =>
-                setSignupForm({ ...signupForm, password: e.target.value })
-              }
+              onChange={(e) => {
+                setSignupForm({ ...signupForm, password: e.target.value });
+              }}
               value={signupForm.password}
+              disabled={isPending}
             />
 
             <Input
@@ -69,9 +101,15 @@ export const SignupCard = () => {
                 })
               }
               value={signupForm.confirmPassword}
+              disabled={isPending}
             />
 
-            <Button size="lg" className="w-full" disabled="false" type="submit">
+            <Button
+              size="lg"
+              className="w-full"
+              type="submit"
+              disabled={isPending}
+            >
               Continue
             </Button>
           </form>
