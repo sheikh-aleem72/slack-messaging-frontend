@@ -19,6 +19,7 @@ export const useSignIn = () => {
       const userObject = JSON.stringify(response.data);
       const token = JSON.stringify(response.data.token);
 
+      // We need to update the localstorage as soon as we signin and set the isLoading as false
       setAuth({
         user: userObject,
         token: token,
