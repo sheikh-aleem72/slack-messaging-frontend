@@ -1,10 +1,11 @@
 import { signInReqeust } from "@/api/auth";
+import { useAuth } from "@/hooks/context/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 
 export const useSignIn = () => {
   const { toast } = useToast();
-
+  const { setAuth } = useAuth();
   const {
     isPending,
     isSuccess,
@@ -17,6 +18,12 @@ export const useSignIn = () => {
 
       const userObject = JSON.stringify(response.data);
       const token = JSON.stringify(response.data.token);
+
+      setAuth({
+        user: userObject,
+        token: token,
+        isLoading: false,
+      });
 
       localStorage.setItem("user", userObject);
       localStorage.setItem("token", token);
