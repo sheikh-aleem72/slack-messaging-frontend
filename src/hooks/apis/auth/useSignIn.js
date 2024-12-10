@@ -21,8 +21,8 @@ export const useSignIn = () => {
 
       // We need to update the localstorage as soon as we signin and set the isLoading as false
       setAuth({
-        user: userObject,
-        token: token,
+        user: response.data,
+        token: response.data.token,
         isLoading: false,
       });
 
