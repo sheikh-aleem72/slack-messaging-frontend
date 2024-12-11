@@ -14,7 +14,7 @@ export const createWorkspaceRequest = async ({ name, descripton, token }) => {
 
     console.log("Repsonse from create workspace api: ", response);
 
-    return response.data;
+    return response?.data?.data;
   } catch (error) {
     console.log("Error in createWorkspaceRequest", error);
     throw error.response.data;

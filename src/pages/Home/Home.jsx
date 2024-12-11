@@ -17,7 +17,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="h-screen w-screen flex justify-center items-center bg-slack flex-col">
+      <div className="h-screen bg-slack">
         <h1>Home</h1>
         <UserButton />
       </div>
