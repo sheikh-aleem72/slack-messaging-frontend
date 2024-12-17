@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/context/useAuth";
+import { UseWorkspacePreferencesModal } from "@/hooks/context/useWorkspacePreferencesModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +11,8 @@ import {
 import { ChevronDownIcon, ListFilterIcon, SquarePenIcon } from "lucide-react";
 
 export const WorkspacePanelHeader = ({ workspace }) => {
+  const { setOpenPreferences } = UseWorkspacePreferencesModal();
+
   const workspacemembers = workspace?.members;
 
   const { auth } = useAuth();
@@ -51,7 +54,10 @@ export const WorkspacePanelHeader = ({ workspace }) => {
 
           {isLoggedInUserAdminOfWorkspace && (
             <>
-              <DropdownMenuItem className="cursor-pointer p-2">
+              <DropdownMenuItem
+                className="cursor-pointer p-2"
+                onClick={() => setOpenPreferences(true)}
+              >
                 Preferences
               </DropdownMenuItem>
               <DropdownMenuSeparator />
