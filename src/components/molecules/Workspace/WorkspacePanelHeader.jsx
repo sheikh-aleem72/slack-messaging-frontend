@@ -11,7 +11,8 @@ import {
 import { ChevronDownIcon, ListFilterIcon, SquarePenIcon } from "lucide-react";
 
 export const WorkspacePanelHeader = ({ workspace }) => {
-  const { setOpenPreferences } = UseWorkspacePreferencesModal();
+  const { setOpenPreferences, setInitialValue } =
+    UseWorkspacePreferencesModal();
 
   const workspacemembers = workspace?.members;
 
@@ -56,7 +57,10 @@ export const WorkspacePanelHeader = ({ workspace }) => {
             <>
               <DropdownMenuItem
                 className="cursor-pointer p-2"
-                onClick={() => setOpenPreferences(true)}
+                onClick={() => {
+                  setInitialValue(workspace?.name);
+                  setOpenPreferences(true);
+                }}
               >
                 Preferences
               </DropdownMenuItem>
