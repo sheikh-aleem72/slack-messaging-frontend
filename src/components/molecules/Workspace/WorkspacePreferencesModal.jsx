@@ -1,10 +1,16 @@
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { useDeleteWorkspace } from "@/hooks/apis/workspaces/useDeleteWorkspace";
+import { useUpdateWorkspace } from "@/hooks/apis/workspaces/useUpdateWorkspace";
 import { UseWorkspacePreferencesModal } from "@/hooks/context/useWorkspacePreferencesModal";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -19,8 +25,17 @@ export const WorkspacePreferencesModal = () => {
   const [workspaceId, setWorkspaceId] = useState(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [editOpen, setEditOpen] = useState(false);
+  const [renameValue, setRenameValue] = useState(workspace?.name);
 
   const { deleteWorkspaceMutation } = useDeleteWorkspace(workspaceId);
+  const { isPending, updateWorkspaceMutation } =
+    useUpdateWorkspace(workspaceId);
+
+  useEffect(() => {
+    setWorkspaceId(workspace?._id);
+    setRenameValue(workspace?.name);
+  }, [workspace]);
 
   function handleClose() {
     setOpenPreferences(false);
@@ -46,9 +61,25 @@ export const WorkspacePreferencesModal = () => {
     }
   }
 
-  useEffect(() => {
-    setWorkspaceId(workspace?._id);
-  }, [workspace]);
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    console.log("Still calling");
+    try {
+      await updateWorkspaceMutation(renameValue);
+      queryClient.invalidateQueries(`fetchWorkspaceById-${workspace?._id}`);
+      setOpenPreferences(false);
+      toast({
+        title: "Workspace Updated Successfully",
+        type: "success",
+      });
+    } catch (error) {
+      console.log("Error while updating workspace", error);
+      toast({
+        title: "Error in updating workspace",
+        type: "failed",
+      });
+    }
+  }
 
   return (
     <Dialog open={openPreferences} onOpenChange={handleClose}>
@@ -57,13 +88,44 @@ export const WorkspacePreferencesModal = () => {
           <DialogTitle>{initialValue}</DialogTitle>
         </DialogHeader>
         <div className="px-4 pb-4 flex flex-col gap-y-2">
-          <div className="px-5 py-4 bg-white rounded-lg border cursor-pointer hover:bg-gray-50">
-            <div className="flex items-center justify-between">
-              <p className="font-semibold text-sm">Workspace Name</p>
-              <p className="text-sm font-semibold hover:underline">Edit</p>
-            </div>
-            <p className="text-sm">{initialValue}</p>
-          </div>
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
+            <DialogTrigger>
+              <div className="px-5 py-4 bg-white rounded-lg border cursor-pointer hover:bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-sm">Workspace Name</p>
+                  <p className="text-sm font-semibold hover:underline">Edit</p>
+                </div>
+
+                <p className="text-sm">{initialValue}</p>
+              </div>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Rename Workspace</DialogTitle>
+              </DialogHeader>
+
+              <form className="space-y-4" onSubmit={handleFormSubmit}>
+                <Input
+                  value={renameValue}
+                  onChange={(e) => setRenameValue(e.target.value)}
+                  required
+                  autoFocus
+                  minLength={3}
+                  maxLength={50}
+                  disabled={isPending}
+                  placeholder="Workspace Name e.g. Design Team"
+                />
+
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="float-end"
+                >
+                  Save
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
 
           <button
             className="flex items-center gap-x-2 px-5 py-4 bg-white rounded-lg border cursor-pointer hover:bg-gray-50"
