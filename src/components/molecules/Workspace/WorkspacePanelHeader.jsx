@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon, ListFilterIcon, SquarePenIcon } from "lucide-react";
+import { useEffect } from "react";
 
 export const WorkspacePanelHeader = ({ workspace }) => {
   const { setOpenPreferences, setInitialValue } =
@@ -18,10 +19,16 @@ export const WorkspacePanelHeader = ({ workspace }) => {
 
   const { auth } = useAuth();
 
+  const { setWorkspace } = UseWorkspacePreferencesModal();
+
   const isLoggedInUserAdminOfWorkspace = workspacemembers?.find(
     (member) =>
       member.memberId._id === auth?.user?.id && member.role === "admin"
   );
+
+  useEffect(() => {
+    setWorkspace(workspace);
+  }, []);
 
   return (
     <div className="flex items-center justify-between px-4 h-[50px] gap-0.5">
