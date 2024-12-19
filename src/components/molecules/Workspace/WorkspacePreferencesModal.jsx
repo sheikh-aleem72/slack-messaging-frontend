@@ -26,7 +26,7 @@ export const WorkspacePreferencesModal = () => {
 
   const [workspaceId, setWorkspaceId] = useState(null);
   const [editOpen, setEditOpen] = useState(false);
-  const [renameValue, setRenameValue] = useState(workspace?.name);
+  const [renameValue, setRenameValue] = useState("");
 
   const { openPreferences, setOpenPreferences, initialValue, workspace } =
     UseWorkspacePreferencesModal();
