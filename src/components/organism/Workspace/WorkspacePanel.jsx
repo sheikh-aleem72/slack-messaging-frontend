@@ -49,6 +49,21 @@ export const WorkspacePanel = () => {
             );
           })}
       </WorkspacePanelSection>
+
+      <WorkspacePanelSection label={"Members"} onIconClick={() => {}}>
+        {workspace &&
+          workspace?.members.map((member) => {
+            return (
+              <SideBarItem
+                key={member?._id}
+                label={member?.memberId?.username}
+                icon={HashIcon}
+                id={member?.memberId._id}
+                variant="default"
+              />
+            );
+          })}
+      </WorkspacePanelSection>
     </div>
   );
 };

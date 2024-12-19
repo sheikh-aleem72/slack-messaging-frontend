@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/context/useAuth";
+import { useWorkspaceInvitaion } from "@/hooks/context/useWorkspaceInvitation";
 import { UseWorkspacePreferencesModal } from "@/hooks/context/useWorkspacePreferencesModal";
 import {
   DropdownMenu,
@@ -14,6 +15,7 @@ import { useEffect } from "react";
 export const WorkspacePanelHeader = ({ workspace }) => {
   const { setOpenPreferences, setInitialValue } =
     UseWorkspacePreferencesModal();
+  const { setOpenInvitationModal } = useWorkspaceInvitaion();
 
   const workspacemembers = workspace?.members;
 
@@ -72,7 +74,10 @@ export const WorkspacePanelHeader = ({ workspace }) => {
                 Preferences
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer p-2">
+              <DropdownMenuItem
+                className="cursor-pointer p-2"
+                onClick={() => setOpenInvitationModal(true)}
+              >
                 Invite people to {workspace?.name}
               </DropdownMenuItem>
             </>
