@@ -9,14 +9,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useResetJoinCode } from "@/hooks/apis/workspaces/useResetJoinCode";
 
 export const WorkspaceInvitationModal = ({
   openInviteModal,
   setOpenInviteModal,
   workspaceName,
   joinCode,
+  workspaceId,
 }) => {
   const { toast } = useToast();
+
+  const { resetJoinCodeMutation } = useResetJoinCode(workspaceId);
 
   async function handleCopy() {
     const inviteLink = `${window.location.origin}/join/${joinCode}`;
@@ -27,7 +31,17 @@ export const WorkspaceInvitationModal = ({
     });
   }
 
-  async function handleResetCode() {}
+  async function handleResetCode() {
+    try {
+      await resetJoinCodeMutation();
+      toast({
+        title: "Join code reset successfully",
+        type: "success",
+      });
+    } catch (error) {
+      console.log("Error while reseting joincode", error);
+    }
+  }
 
   return (
     <Dialog open={openInviteModal} onOpenChange={setOpenInviteModal}>

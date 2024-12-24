@@ -121,3 +121,28 @@ export const createChannelRequest = async ({
     throw error.response.data;
   }
 };
+
+export const resestJoinCodeRequest = async ({ token, workspaceId }) => {
+  try {
+    console.log("workspace: ", workspaceId);
+    const response = await axios.put(
+      `/workspace/${workspaceId}/joinCode/reset`,
+      {},
+      {
+        headers: {
+          "x-access-token": token,
+        },
+      }
+    );
+
+    console.log(
+      "Response from update joincode api request: ",
+      response?.data?.data
+    );
+
+    return response?.data?.data;
+  } catch (error) {
+    console.log("Error while updating joincode", error);
+    throw error.response.data;
+  }
+};
