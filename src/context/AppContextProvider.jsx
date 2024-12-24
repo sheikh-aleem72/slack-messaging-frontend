@@ -4,7 +4,6 @@ import { CreateWorkspaceContextProvider } from "./CreateWorkspaceContext";
 import { WorkspacePreferencesModalContextProvider } from "./WorkspacePreferencesModalContext";
 import { CreateChannelContextProvider } from "./CreateChannelContext";
 import { WorkspaceContextProvider } from "./WorkspaceContext";
-import { WorkspaceInvitationContextProvider } from "./WorkspaceInvitationContext";
 
 /**
  * This component will simply combine the context provider using combine context
@@ -14,6 +13,5 @@ export const AppContextProvider = combineContext(
   WorkspaceContextProvider,
   CreateWorkspaceContextProvider,
   WorkspacePreferencesModalContextProvider,
-  CreateChannelContextProvider,
-  WorkspaceInvitationContextProvider
+  CreateChannelContextProvider
 );
