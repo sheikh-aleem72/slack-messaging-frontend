@@ -124,7 +124,6 @@ export const createChannelRequest = async ({
 
 export const resestJoinCodeRequest = async ({ token, workspaceId }) => {
   try {
-    console.log("workspace: ", workspaceId);
     const response = await axios.put(
       `/workspace/${workspaceId}/joinCode/reset`,
       {},
@@ -143,6 +142,31 @@ export const resestJoinCodeRequest = async ({ token, workspaceId }) => {
     return response?.data?.data;
   } catch (error) {
     console.log("Error while updating joincode", error);
+    throw error.response.data;
+  }
+};
+
+export const joinWorkspaceRequest = async ({
+  token,
+  workspaceId,
+  joinCode,
+}) => {
+  try {
+    const response = await axios.put(
+      `/workspace/${workspaceId}/join`,
+      { joinCode: joinCode },
+      {
+        headers: {
+          "x-access-token": token,
+        },
+      }
+    );
+
+    console.log("Response from join workspace request: ", response?.data?.data);
+
+    return response?.data?.data;
+  } catch (error) {
+    console.log("Error while joining to workspace:", error);
     throw error.response.data;
   }
 };
