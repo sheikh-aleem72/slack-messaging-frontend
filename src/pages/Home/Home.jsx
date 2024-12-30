@@ -14,7 +14,7 @@ export default function Home() {
 
     console.log("Workspaces downloaded: ", workspaces);
 
-    if (workspaces.length === 0 || !workspaces) {
+    if (workspaces?.length === 0 || !workspaces) {
       console.log("No workspaces found, create new one!");
       setOpenCreateWorkspaceModal(true);
     } else {
