@@ -16,7 +16,7 @@ export const WorksapceNavbar = () => {
 
   useEffect(() => {
     if (!isFetching && !isSuccess && error) {
-      console.log("Error fetching workspace", error.status);
+      console.log("Error fetching workspace", error);
       if (error.status === 403) {
         logout();
         navigate("/auth/signin");

@@ -49,7 +49,7 @@ export const fetchWorkspaceByIdRequest = async ({ token, workspaceId }) => {
     return response?.data?.data;
   } catch (error) {
     console.log("Error while fetching workspace by id", error);
-    throw error.response.data;
+    throw error.response;
   }
 };
 
