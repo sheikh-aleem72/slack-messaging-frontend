@@ -27,8 +27,6 @@ export const SocketContextProvider = ({ children }) => {
         socket,
         joinChannel,
         currentChannel,
-        messageList,
-        setMessageList,
       }}
     >
       {children}

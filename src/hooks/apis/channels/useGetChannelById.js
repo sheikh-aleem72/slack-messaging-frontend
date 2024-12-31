@@ -8,7 +8,7 @@ export const useGetChannelById = (channelId) => {
   const {
     isFetching,
     error,
-    data: channelData,
+    data: channelDetails,
     isError,
   } = useQuery({
     queryFn: () => getChannelByIdRequest({ token: auth.token, channelId }),
@@ -18,7 +18,7 @@ export const useGetChannelById = (channelId) => {
   return {
     isFetching,
     error,
-    channelData,
+    channelDetails,
     isError,
   };
 };
