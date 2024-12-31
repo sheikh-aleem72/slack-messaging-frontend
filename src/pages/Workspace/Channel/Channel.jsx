@@ -3,7 +3,9 @@ import { ChatInput } from "@/components/molecules/ChatInput/ChatInput";
 import { Message } from "@/components/molecules/Message/Message";
 import { useGetChannelById } from "@/hooks/apis/channels/useGetChannelById";
 import { useGetChannelMessages } from "@/hooks/apis/channels/useGetChannelMessages";
+import { useChannelMessages } from "@/hooks/context/useChannelMessages";
 import { useSocket } from "@/hooks/context/useSocket";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, TriangleAlertIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -11,17 +13,36 @@ import { useParams } from "react-router-dom";
 export const Channel = () => {
   const { channelId } = useParams();
 
+  const queryClient = useQueryClient();
+
   const { isFetching, isError, channelData } = useGetChannelById(channelId);
 
   const { joinChannel } = useSocket();
 
-  const { isFetched, error, messages } = useGetChannelMessages(channelId);
+  const { isSuccess, messages } = useGetChannelMessages(channelId);
 
+  const { messageList, setMessageList } = useChannelMessages();
+
+  // useEffect for invalidating cache for messages
+  useEffect(() => {
+    console.log("channel id: ", channelId);
+    queryClient.invalidateQueries("getPaginatedMessages");
+  }, [channelId]);
+
+  // useEffect for joining channel when channel changes
   useEffect(() => {
     if (!isFetching && !isError) {
       joinChannel(channelId);
     }
   }, [isFetching, isError, channelData]);
+
+  // useEffect for setting message  list
+  useEffect(() => {
+    if (isSuccess) {
+      console.log("Channel messages fetched");
+      setMessageList(messages);
+    }
+  }, [isSuccess, setMessageList, messages, channelId]);
 
   if (isFetching) {
     return (
@@ -42,17 +63,19 @@ export const Channel = () => {
   return (
     <div className="h-full flex flex-col">
       <ChannelHeader name={channelData?.name} />
-      {messages?.map((message) => {
-        return (
-          <Message
-            key={message._id}
-            body={message.body}
-            authorImage={message.senderId?.avatar}
-            authorName={message.senderId?.username}
-            createdAt={message.createdAt}
-          />
-        );
-      })}
+      <div className="h-auto overflow-scroll">
+        {messageList?.map((message) => {
+          return (
+            <Message
+              key={message._id}
+              body={message.body}
+              authorImage={message.senderId?.avatar}
+              authorName={message.senderId?.username}
+              createdAt={message.createdAt}
+            />
+          );
+        })}
+      </div>
       <div className="flex-1" />
       <ChatInput />
     </div>
