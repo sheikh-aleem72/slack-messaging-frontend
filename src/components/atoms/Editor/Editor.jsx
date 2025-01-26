@@ -142,7 +142,10 @@ export const Editor = ({
                 );
                 onSubmit({
                   body: messageContent,
+                  // image // For image upload currently not enabled because not have aws account
                 });
+                imageRef.current.value = "";
+                setImage(null);
                 quillRef.current.setText("");
               }}
               disabled={false}

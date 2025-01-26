@@ -1,3 +1,4 @@
+import { getPreginedUrl, uploadImageToAWSpresignedUrl } from "@/api/S3";
 import { Editor } from "@/components/atoms/Editor/Editor";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useCurrentWorkspace } from "@/hooks/context/useCurrentWorkspace";
@@ -10,12 +11,29 @@ export const ChatInput = () => {
 
   async function handleSubmit({ body, image }) {
     console.log(body, image);
+    console.log(body, image);
+    let fileUrl = null;
+    if (image) {
+      const preSignedUrl = await queryClient.fetchQuery({
+        queryKey: ["getPresignedUrl"],
+        queryFn: () => getPreginedUrl({ token: auth?.token }),
+      });
 
+      console.log("Presigned url", preSignedUrl);
+
+      const responseAws = await uploadImageToAWSpresignedUrl({
+        url: preSignedUrl,
+        file: image,
+      });
+      console.log("file upload success", responseAws);
+      fileUrl = preSignedUrl.split("?")[0];
+    }
     socket?.emit(
       "NewMessage",
       {
         channelId: currentChannel,
         body,
+        image: fileUrl,
         senderId: auth?.user?.id,
         workspaceId: currentWorkspace,
       },
