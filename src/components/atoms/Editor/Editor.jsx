@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { PiTextAa } from "react-icons/pi";
 import { Hint } from "../Hint/Hint";
 import { MdSend } from "react-icons/md";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, XIcon } from "lucide-react";
 export const Editor = ({
   placeholder,
   onSubmit,
@@ -13,7 +13,7 @@ export const Editor = ({
   disabled,
   defaultValue,
 }) => {
-  const [text, setText] = useState("");
+  const [image, setImage] = useState(null);
   const [isToolbarVisible, setToolbarVisible] = useState(null);
 
   const containerRef = useRef();
@@ -22,6 +22,7 @@ export const Editor = ({
   const defaultValueRef = useRef();
   const quillRef = useRef();
   const placeholderRef = useRef();
+  const imageRef = useRef(null);
 
   function toggleToolbar() {
     setToolbarVisible(!isToolbarVisible);
@@ -80,6 +81,28 @@ export const Editor = ({
     <div className="flex flex-col">
       <div className="flex flex-col border border-slate-300 rounded-md overflow-hidden focus-within:shadow-sm focus-within:border-slate-400 bg-white ">
         <div className="h-full ql-custom" ref={containerRef} />
+
+        {image && (
+          <div className="p-2">
+            <div className="relative size-[60px] flex items-center justify-center group/image">
+              <button
+                className="hidden group-hover/image:flex rounded-full bg-black/70 hover:bg-black absolute -top-2.5 -right-2.5 text-white size-6 z-[5] border-2 border-white items-center justify-center"
+                onClick={() => {
+                  setImage(null);
+                  imageRef.current.value = "";
+                }}
+              >
+                <XIcon className="size-4" />
+              </button>
+
+              <img
+                src={URL.createObjectURL(image)}
+                className="rounded-xl overflow-hidden border object-cover"
+              />
+            </div>
+          </div>
+        )}
+
         <div className="flex px-2 pb-2 z-[5] gap-2">
           <Hint label={isToolbarVisible ? "show toolbar" : "hide toobar"}>
             <Button
@@ -91,12 +114,21 @@ export const Editor = ({
               <PiTextAa className="size-4" />
             </Button>
           </Hint>
+
+          <input
+            className="hidden"
+            type="file"
+            ref={imageRef}
+            onChange={(e) => setImage(e.target.files[0])}
+          />
           <Hint label="Image">
             <Button
               size="iconSm"
               variant="ghost"
               disabled={false}
-              onClick={() => {}}
+              onClick={() => {
+                imageRef.current.click();
+              }}
             >
               <ImageIcon className="size-4" />
             </Button>

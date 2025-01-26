@@ -1,8 +1,11 @@
+import { QueryClient } from "@tanstack/react-query";
 import { createContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
+  const queryClient = new QueryClient();
+
   const [auth, setAuth] = useState({
     user: null,
     token: null,
@@ -31,6 +34,7 @@ export const AuthContextProvider = ({ children }) => {
   async function logout() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    queryClient.invalidateQueries("fetchWorkspace");
 
     setAuth({
       user: null,

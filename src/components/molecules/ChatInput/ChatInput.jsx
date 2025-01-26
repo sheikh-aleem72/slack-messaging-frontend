@@ -8,8 +8,8 @@ export const ChatInput = () => {
   const { currentWorkspace } = useCurrentWorkspace();
   const { socket, currentChannel } = useSocket();
 
-  async function handleSubmit({ body }) {
-    console.log(body);
+  async function handleSubmit({ body, image }) {
+    console.log(body, image);
 
     socket?.emit(
       "NewMessage",
