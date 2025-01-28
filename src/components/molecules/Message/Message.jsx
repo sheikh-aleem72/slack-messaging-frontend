@@ -10,7 +10,7 @@ export const Message = ({
   image,
 }) => {
   return (
-    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative">
+    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-400/60 rounded-sm group relative">
       <div className="flex items-center gap-2">
         <button>
           <Avatar>

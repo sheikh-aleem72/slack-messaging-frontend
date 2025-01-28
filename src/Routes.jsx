@@ -8,6 +8,7 @@ import Home from "./pages/Home/Home";
 import { WorkspaceLayout } from "./pages/Workspace/Layout";
 import { JoinPage } from "./pages/Workspace/JoinPage";
 import { Channel } from "./pages/Workspace/Channel/Channel";
+import { WorkspacePage } from "./components/organism/Workspace/WorkspacePage";
 
 export const AppRoutes = () => {
   return (
@@ -40,7 +41,9 @@ export const AppRoutes = () => {
         path="/workspaces/:workspaceId"
         element={
           <ProtectedRoute>
-            <WorkspaceLayout>Workspace</WorkspaceLayout>
+            <WorkspaceLayout>
+              <WorkspacePage />
+            </WorkspaceLayout>
           </ProtectedRoute>
         }
       />

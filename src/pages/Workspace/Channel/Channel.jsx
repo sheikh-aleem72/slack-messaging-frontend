@@ -72,7 +72,7 @@ export const Channel = () => {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-slack-darklight rounded-md">
       <ChannelHeader name={channelDetails?.name} />
 
       {/* We need to make sure that below div is scrollable for the messages */}

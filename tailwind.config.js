@@ -16,6 +16,8 @@ export default {
           DEFAULT: "#5c3B58",
           dark: "#481349",
           medium: "#5E2C5F",
+          light: "#7d407c",
+          darklight: "#896e8f",
         },
         card: {
           DEFAULT: "hsl(var(--card))",

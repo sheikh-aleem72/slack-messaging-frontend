@@ -32,15 +32,15 @@ export const WorksapceNavbar = () => {
     return <LucideLoader2 className="animate-spin ml-2" />;
   }
   return (
-    <nav className="h-10 flex items-center justify-center bg-slack-dark p-1.5">
+    <nav className="h-12 flex items-center justify-center rounded-sm  bg-slack-dark p-1.5">
       <div className="flex-1" />
       <div>
         <Button
           size="sm"
-          className="bg-accent/25 hover:bg-accent/15 w-full justify-start h-7 px-2"
+          className="bg-accent/25 hover:bg-accent/15 min-w-[200px] justify-center h-7 px-2"
         >
           <SearchIcon className="size-5 text-white mr-2" />
-          <span className="text-white text-xs">
+          <span className="text-white text-sm ">
             Search {workspace?.name || "Workspace"}
           </span>
         </Button>

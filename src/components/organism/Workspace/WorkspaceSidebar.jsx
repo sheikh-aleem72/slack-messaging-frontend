@@ -10,7 +10,7 @@ import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 
 export const WorkspaceSidebar = () => {
   return (
-    <aside className="w-[70px] h-full bg-slack-dark flex flex-col gap-y-4 items-center pt-[10px] pb-[5px]">
+    <aside className="w-[70px] h-full bg-slack-dark rounded-l-md flex flex-col gap-y-4 items-center pt-[10px] pb-[5px]">
       <WorkspaceSwitcher />
       <SidebarButton Icon={HomeIcon} label="Home" />
       <SidebarButton Icon={MessageSquareIcon} label="DMs" />

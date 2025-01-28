@@ -10,7 +10,7 @@ import { FaChevronDown } from "react-icons/fa";
 
 export const ChannelHeader = ({ name }) => {
   return (
-    <div className="bg-white border-b h-[50px] flex items-center px-4 py-4 overflow-hidden">
+    <div className="bg-slack-darklight rounded-t-md border-b h-[50px] flex items-center px-4 py-4 overflow-hidden">
       <Dialog>
         <DialogTrigger asChild>
           <Button

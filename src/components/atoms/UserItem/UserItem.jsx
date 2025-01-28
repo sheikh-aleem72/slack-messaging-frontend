@@ -6,6 +6,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useCurrentWorkspace } from "@/hooks/context/useCurrentWorkspace";
 import { cn } from "@/lib/utils";
+import { MdAdminPanelSettings } from "react-icons/md";
 
 const userItemVariants = cva(
   "flex items-center gap-1.5 justify-start font-normal h-7 px-4 mt-2 text-sm",
@@ -20,7 +21,7 @@ const userItemVariants = cva(
   }
 );
 
-export const UserItem = ({ id, label = "Member", image, variant }) => {
+export const UserItem = ({ id, label = "Member", image, variant, role }) => {
   const { currentWorkspace } = useCurrentWorkspace();
 
   return (
@@ -38,6 +39,11 @@ export const UserItem = ({ id, label = "Member", image, variant }) => {
           </AvatarFallback>
         </Avatar>
         <span className="text-sm truncate">{label}</span>
+        {(role == "admin" ? true : false) && (
+          <span className="text-xs ml-auto text-gray-200">
+            {<MdAdminPanelSettings />}
+          </span>
+        )}
       </Link>
     </Button>
   );

@@ -9,11 +9,11 @@ import {
 
 export const WorkspaceLayout = ({ children }) => {
   return (
-    <div className="h-[100vh]">
+    <div className="h-[100vh] px-[.5px]">
       <div>
         <WorksapceNavbar />
       </div>
-      <div className="flex h-[calc(100vh-40px)]">
+      <div className="flex h-[calc(100vh-48px)] p-[.5px]">
         <WorkspaceSidebar />
         <ResizablePanelGroup
           direction="horizontal"
@@ -22,7 +22,7 @@ export const WorkspaceLayout = ({ children }) => {
           <ResizablePanel
             defaultSize={20}
             minSize={11}
-            className="bg-slack-medium"
+            className="bg-slack-medium rounded-r-md"
           >
             <WorkspacePanel />
           </ResizablePanel>

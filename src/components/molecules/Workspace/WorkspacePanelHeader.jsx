@@ -12,7 +12,7 @@ import { ChevronDownIcon, ListFilterIcon, SquarePenIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { WorkspaceInvitationModal } from "./WorkspaceInvitationModal";
 
-export const WorkspacePanelHeader = ({ workspace }) => {
+export const WorkspacePanelHeader = ({ workspace, Icon, trigger }) => {
   const { setOpenPreferences, setInitialValue } =
     UseWorkspacePreferencesModal();
 
@@ -50,8 +50,8 @@ export const WorkspacePanelHeader = ({ workspace }) => {
               variant="transparent"
               className="font-semibold text-lg w-auto p-1.5 overflow-hidden"
             >
-              <span className="truncate">{workspace?.name}</span>
-              <ChevronDownIcon className="size-5 ml-1" />
+              <span className="truncate">{trigger}</span>
+              <Icon className="size-5 ml-1" />
             </Button>
           </DropdownMenuTrigger>
 
@@ -96,16 +96,6 @@ export const WorkspacePanelHeader = ({ workspace }) => {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-
-        <div className="flex items-center gap-2">
-          <Button variant="transparent" size="iconSm">
-            <ListFilterIcon className="size-5" />
-          </Button>
-
-          <Button variant="transparent" size="iconSm">
-            <SquarePenIcon className="size-5" />
-          </Button>
-        </div>
       </div>
     </>
   );

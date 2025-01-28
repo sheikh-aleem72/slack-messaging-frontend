@@ -4,7 +4,12 @@ import { WorkspacePanelHeader } from "@/components/molecules/Workspace/Workspace
 import { WorkspacePanelSection } from "@/components/molecules/Workspace/WorkspacePanelSection";
 import { useGetWorkspaceById } from "@/hooks/apis/workspaces/useGetWorkspaceById";
 import { useCreateChannelModal } from "@/hooks/context/useCreateChannelModal";
-import { AlertTriangleIcon, HashIcon, Loader } from "lucide-react";
+import {
+  AlertTriangleIcon,
+  ChevronDownIcon,
+  HashIcon,
+  Loader,
+} from "lucide-react";
 import { useParams } from "react-router-dom";
 
 export const WorkspacePanel = () => {
@@ -32,7 +37,11 @@ export const WorkspacePanel = () => {
   }
   return (
     <div className="flex flex-col h-full bg-slack-medium">
-      <WorkspacePanelHeader workspace={workspace} />
+      <WorkspacePanelHeader
+        workspace={workspace}
+        Icon={ChevronDownIcon}
+        trigger={workspace?.name}
+      />
       <WorkspacePanelSection
         label={"Channels"}
         onIconClick={() => setOpenCreateChannelModal(true)}
