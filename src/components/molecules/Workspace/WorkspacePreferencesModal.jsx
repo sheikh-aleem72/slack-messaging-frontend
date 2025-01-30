@@ -119,7 +119,7 @@ export const WorkspacePreferencesModal = () => {
                     </p>
                   </div>
 
-                  <p className="text-sm">{initialValue}</p>
+                  <p className="text-sm text-left">{initialValue}</p>
                 </div>
               </DialogTrigger>
               <DialogContent>

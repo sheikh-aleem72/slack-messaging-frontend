@@ -53,3 +53,17 @@ export const updateChannelRequest = async ({ token, channelId, name }) => {
     console.log("Error from updateChannelRequest: ", error);
   }
 };
+
+export const deleteChannelRequest = async ({ token, channelId }) => {
+  try {
+    const response = await axios.delete(`/channels/${channelId}`, {
+      headers: {
+        "x-access-token": token,
+      },
+    });
+
+    return response?.data?.data;
+  } catch (error) {
+    console.log("Error while deleting channel at deleteChannelRequest", error);
+  }
+};
