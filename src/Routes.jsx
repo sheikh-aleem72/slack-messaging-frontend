@@ -9,6 +9,7 @@ import { WorkspaceLayout } from "./pages/Workspace/Layout";
 import { JoinPage } from "./pages/Workspace/JoinPage";
 import { Channel } from "./pages/Workspace/Channel/Channel";
 import { WorkspacePage } from "./components/organism/Workspace/WorkspacePage";
+import { Member } from "./pages/Workspace/Member/Member";
 
 export const AppRoutes = () => {
   return (
@@ -58,10 +59,12 @@ export const AppRoutes = () => {
         }
       />
       <Route
-        path="/workspaces/:workspaceId/channels/:channelId"
+        path="/workspaces/:workspaceId/members/:memberId"
         element={
           <ProtectedRoute>
-            <div>channel</div>
+            <WorkspaceLayout>
+              <Member />
+            </WorkspaceLayout>
           </ProtectedRoute>
         }
       />

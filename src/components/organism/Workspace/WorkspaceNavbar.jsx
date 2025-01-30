@@ -28,9 +28,9 @@ export const WorksapceNavbar = () => {
     }
   }, [workspace, setCurrentWorkspace, isFetching, isSuccess, error]);
 
-  if (isFetching) {
-    return <LucideLoader2 className="animate-spin ml-2" />;
-  }
+  // if (isFetching) {
+  //   return <LucideLoader2 className="animate-spin ml-2" />;
+  // }
   return (
     <nav className="h-12 flex items-center justify-center rounded-sm  bg-slack-dark p-1.5">
       <div className="flex-1" />

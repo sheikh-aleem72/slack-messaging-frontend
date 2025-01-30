@@ -46,7 +46,7 @@ export const CreateChannelModal = () => {
       console.log("Error while creating channel");
       setOpenCreateChannelModal(false);
       toast({
-        title: "Error while creating channel",
+        title: `${error?.message}`,
         type: "failed",
       });
     }

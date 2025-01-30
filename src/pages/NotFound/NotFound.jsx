@@ -8,7 +8,7 @@ export default function NotFound() {
   const navigate = useNavigate();
   return (
     <>
-      <div className="flex h-[100vh] w-full flex-col items-center justify-center  bg-gray-100">
+      <div className="flex h-[100vh] w-full flex-col items-center justify-center p-4  bg-gray-100">
         <Card className="text-center shadow-lg h-[400px] bg-blue-400">
           <CardHeader>
             <CardTitle>404 Not Found</CardTitle>
@@ -18,7 +18,7 @@ export default function NotFound() {
           </CardHeader>
 
           <CardContent className="flex justify-center flex-col">
-            {/* <img className="h-[200px]" src={notfound} /> */}
+            <img className="h-[200px]" src={notfound} />
             <Button
               variant="outline"
               onClick={() => navigate(-1)}
