@@ -36,3 +36,20 @@ export const getPaginatedMessages = async ({
     console.log("Error in getPaginatedMessagesRequest", error);
   }
 };
+
+export const updateChannelRequest = async ({ token, channelId, name }) => {
+  try {
+    const response = await axios.put(
+      `/channels/${channelId}`,
+      { name },
+      {
+        headers: {
+          "x-access-token": token,
+        },
+      }
+    );
+    return response?.data?.data;
+  } catch (error) {
+    console.log("Error from updateChannelRequest: ", error);
+  }
+};
