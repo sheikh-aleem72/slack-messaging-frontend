@@ -22,7 +22,7 @@ export const MessageRenderer = ({ value }) => {
     const content = JSON.parse(value);
     quill.setContents(content);
 
-    console.log("Content: ", quill.root.innerHTML);
+    // console.log("Content: ", quill.root.innerHTML);
 
     // Check if the content is empty or not
     const isContentEmpty = quill.getText().trim().length === 0;
