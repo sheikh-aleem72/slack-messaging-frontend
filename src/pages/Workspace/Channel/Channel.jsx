@@ -49,7 +49,7 @@ export const Channel = () => {
   // useEffect for setting messages fetched from the database to messageList
   useEffect(() => {
     if (isSuccess) {
-      console.log("Channel Messages fetched");
+      console.log("Channel Messages fetched", messages);
       setMessageList(messages);
     }
   }, [isSuccess, messages, setMessageList, channelId]);
@@ -91,6 +91,7 @@ export const Channel = () => {
               authorName={message.senderId?.username}
               createdAt={`${date} ${time}`}
               image={message?.image}
+              senderId={message?.senderId?._id}
             />
           );
         })}

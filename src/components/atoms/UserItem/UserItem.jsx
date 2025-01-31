@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { MdAdminPanelSettings } from "react-icons/md";
 
 const userItemVariants = cva(
-  "flex items-center gap-1.5 justify-start font-normal h-7 px-4 mt-2 text-sm",
+  "flex items-center gap-1.5 justify-start font-normal  px-4 mt-2 text-sm",
   {
     variants: {
       variant: {
@@ -33,7 +33,7 @@ export const UserItem = ({ id, label = "Member", image, variant, role }) => {
     >
       <Link to={`/workspaces/${currentWorkspace?._id}/members/${id}`}>
         <Avatar>
-          <AvatarImage src={image} className="rounded-md" />
+          <AvatarImage src={image} className="rounded-md h-[35px]" />
           <AvatarFallback className="rounded-md bg-sky-500 text-white">
             {label.charAt(0).toUpperCase()}
           </AvatarFallback>
