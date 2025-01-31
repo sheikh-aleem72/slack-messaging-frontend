@@ -11,7 +11,7 @@ export const ChatInput = () => {
 
   async function handleSubmit({ body, image }) {
     console.log(body, image);
-    console.log(body, image);
+
     let fileUrl = null;
     if (image) {
       const preSignedUrl = await queryClient.fetchQuery({

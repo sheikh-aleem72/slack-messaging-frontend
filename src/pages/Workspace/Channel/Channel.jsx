@@ -86,6 +86,7 @@ export const Channel = () => {
           return (
             <Message
               key={message._id}
+              messageId={message._id}
               body={message.body}
               authorImage={message.senderId?.avatar}
               authorName={message.senderId?.username}

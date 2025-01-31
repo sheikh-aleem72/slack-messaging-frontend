@@ -42,7 +42,7 @@ export const Editor = ({
 
     const options = {
       theme: "snow",
-      placeholder: placeholderRef.current,
+      placeholder: placeholder,
       modules: {
         toolbar: [
           ["bold", "italic", "underline", "strike"],
@@ -77,6 +77,26 @@ export const Editor = ({
 
     quill.setContents(defaultValueRef.current);
   }, []);
+
+  function handleSendMessage() {
+    const message = quillRef.current?.getText().trim();
+
+    if (message.length === 0 && imageRef.current.value === "") {
+      console.log("cannot send empty message");
+      quillRef.current.setText("");
+      return;
+    }
+
+    const messageContent = JSON.stringify(quillRef.current?.getContents());
+
+    onSubmit({
+      body: messageContent,
+      // image // For image upload currently not enabled because not have aws account
+    });
+    imageRef.current.value = "";
+    setImage(null);
+    quillRef.current.setText("");
+  }
   return (
     <div className="flex flex-col">
       <div className="flex flex-col border border-slate-300 rounded-md overflow-hidden focus-within:shadow-sm focus-within:border-slate-400 bg-white ">
@@ -137,16 +157,7 @@ export const Editor = ({
             <Button
               className="ml-auto bg-[#007a6a] hover:bg-[#007a6a]/80 text-white"
               onClick={() => {
-                const messageContent = JSON.stringify(
-                  quillRef.current?.getContents()
-                );
-                onSubmit({
-                  body: messageContent,
-                  // image // For image upload currently not enabled because not have aws account
-                });
-                imageRef.current.value = "";
-                setImage(null);
-                quillRef.current.setText("");
+                handleSendMessage();
               }}
               disabled={false}
             >
