@@ -3,6 +3,7 @@ import { UserItem } from "@/components/atoms/UserItem/UserItem";
 import { WorkspacePanelHeader } from "@/components/molecules/Workspace/WorkspacePanelHeader";
 import { WorkspacePanelSection } from "@/components/molecules/Workspace/WorkspacePanelSection";
 import { useGetWorkspaceById } from "@/hooks/apis/workspaces/useGetWorkspaceById";
+import { useAddMemberModal } from "@/hooks/context/useAddMemberModal";
 import { useCreateChannelModal } from "@/hooks/context/useCreateChannelModal";
 import {
   AlertTriangleIcon,
@@ -18,6 +19,7 @@ export const WorkspacePanel = () => {
   const { workspace, isFetching, isSuccess } = useGetWorkspaceById(workspaceId);
 
   const { setOpenCreateChannelModal } = useCreateChannelModal();
+  const { setOpenAddMemberModal } = useAddMemberModal();
 
   if (isFetching) {
     return (
@@ -60,7 +62,13 @@ export const WorkspacePanel = () => {
           })}
       </WorkspacePanelSection>
 
-      <WorkspacePanelSection label="Direct messages" onIconClick={() => {}}>
+      <WorkspacePanelSection
+        label="Direct messages"
+        onIconClick={() => {
+          console.log("Add Member button clicked!");
+          setOpenAddMemberModal(true);
+        }}
+      >
         {workspace?.members?.map((member) => {
           return (
             <UserItem

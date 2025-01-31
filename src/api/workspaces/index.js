@@ -170,3 +170,31 @@ export const joinWorkspaceRequest = async ({
     throw error.response.data;
   }
 };
+
+export const addMemberToWorkspaceUsingMailRequest = async ({
+  token,
+  workspaceId,
+  email,
+}) => {
+  try {
+    const response = await axios.put(
+      `/workspace/${workspaceId}/addMembers`,
+      { email },
+      {
+        headers: {
+          "x-access-token": token,
+        },
+      }
+    );
+
+    console.log(
+      "Response from add member to workspace using mail request: ",
+      response?.data?.data
+    );
+
+    return response?.data?.data;
+  } catch (error) {
+    console.log("Error while adding member to workspace using mail:", error);
+    throw error.response.data;
+  }
+};

@@ -39,7 +39,7 @@ export const UserItem = ({ id, label = "Member", image, variant, role }) => {
           </AvatarFallback>
         </Avatar>
         <span className="text-sm truncate">{label}</span>
-        {(role == "admin" ? true : false) && (
+        {role === "admin" && (
           <span className="text-xs ml-auto text-gray-200">
             {<MdAdminPanelSettings />}
           </span>
