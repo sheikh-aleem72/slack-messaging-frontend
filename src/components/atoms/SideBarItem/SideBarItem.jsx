@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const sideBarItemVariants = cva(
-  "flex items-center justify-start gap-1.5 font-normal h-7 px-[20px] text-sm overflow-hidden",
+  "flex items-center w-full justify-start gap-1.5 font-normal h-7 px-[20px] text-sm overflow-hidden",
   {
     variants: {
       variant: {
@@ -26,18 +26,18 @@ export const SideBarItem = ({
   const { workspaceId } = useParams();
 
   return (
-    <Button
-      variant="transparent"
-      size="sm"
-      className={cn(sideBarItemVariants({ variant }))}
+    <Link
+      className="flex items-center gap-1.5 w-full"
+      to={`/workspaces/${workspaceId}/channels/${id}`}
     >
-      <Link
-        className="flex items-center gap-1.5"
-        to={`/workspaces/${workspaceId}/channels/${id}`}
+      <Button
+        variant="transparent"
+        size="sm"
+        className={cn(sideBarItemVariants({ variant }))}
       >
         <Icon className="size-3.5 mr-1" />
         <span className="text-sm">{label}</span>
-      </Link>
-    </Button>
+      </Button>
+    </Link>
   );
 };

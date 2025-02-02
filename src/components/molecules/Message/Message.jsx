@@ -99,7 +99,7 @@ export const Message = ({
           </button>
 
           <div className="w-full flex flex-col overflow-hidden bg-gray-200 p-1.5 px-4 rounded-sm ">
-            <div className="text-xs mb-[1px] text-black/50">
+            <div className="text-xs mb-[1px] text-black/50 flex items-center">
               <button className="font-bold  hover:underline">
                 {authorName}
               </button>
@@ -129,13 +129,6 @@ export const Message = ({
             <MessageRenderer value={body} />
             {image && <MessageImageThumbnail url={image} />}
           </div>
-        </div>
-      )}
-      {(isAdmin || isCurrentUser) && (
-        <div className="absolute top-0 right-0">
-          <button>
-            <MoreVertical />
-          </button>
         </div>
       )}
     </div>

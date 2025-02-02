@@ -8,6 +8,7 @@ import {
 import { useAuth } from "@/hooks/context/useAuth";
 import { useCreateWorkspaceModal } from "@/hooks/context/useCreateWorkspaceModal";
 import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { LucideLogOut, LucideSettings2, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,6 +17,7 @@ export const UserButton = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { setOpenCreateWorkspaceModal } = useCreateWorkspaceModal();
+  const queryClient = useQueryClient();
 
   function openWorkspaceCreateModal() {
     setOpenCreateWorkspaceModal(true);
@@ -23,6 +25,8 @@ export const UserButton = () => {
 
   async function handleLogout() {
     await logout();
+
+    queryClient.invalidateQueries("fetchWorkspace"); // Removes previous workspaces of previous user from cache
 
     toast({
       title: "Successfully signed out",

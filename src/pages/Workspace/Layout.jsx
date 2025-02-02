@@ -6,15 +6,31 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { useGetWorkspaceById } from "@/hooks/apis/workspaces/useGetWorkspaceById";
+import { useParams } from "react-router-dom";
 
 export const WorkspaceLayout = ({ children }) => {
+  const { workspaceId } = useParams();
+  const { isFetching, isSuccess, error, workspace } =
+    useGetWorkspaceById(workspaceId);
+
   return (
     <div className="h-[100vh] px-[.5px]">
       <div>
-        <WorksapceNavbar />
+        <WorksapceNavbar
+          isSuccess={isSuccess}
+          isFetching={isFetching}
+          error={error}
+          workspace={workspace}
+        />
       </div>
       <div className="flex h-[calc(100vh-48px)] p-[.5px]">
-        <WorkspaceSidebar />
+        <WorkspaceSidebar
+          isSuccess={isSuccess}
+          isFetching={isFetching}
+          error={error}
+          workspace={workspace}
+        />
         <ResizablePanelGroup
           direction="horizontal"
           autoSaveId={"workspace-resize"}
@@ -24,7 +40,12 @@ export const WorkspaceLayout = ({ children }) => {
             minSize={11}
             className="bg-slack-medium rounded-r-md"
           >
-            <WorkspacePanel />
+            <WorkspacePanel
+              isSuccess={isSuccess}
+              isFetching={isFetching}
+              error={error}
+              workspace={workspace}
+            />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel minSize={20}>{children}</ResizablePanel>

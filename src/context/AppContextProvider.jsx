@@ -12,10 +12,10 @@ import { AddMemberContextProvider } from "./AddMemberContext";
  * This component will simply combine the context provider using combine context
  */
 export const AppContextProvider = combineContext(
+  WorkspaceContextProvider,
   ChannelMessagesProvider,
   SocketContextProvider,
   AuthContextProvider,
-  WorkspaceContextProvider,
   CreateWorkspaceContextProvider,
   WorkspacePreferencesModalContextProvider,
   CreateChannelContextProvider,
