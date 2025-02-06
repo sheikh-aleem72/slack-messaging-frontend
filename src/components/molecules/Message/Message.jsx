@@ -17,6 +17,7 @@ import { MoreVertical, Trash } from "lucide-react";
 export const Message = ({
   authorImage,
   authorName,
+  authorId,
   createdAt,
   body,
   image,

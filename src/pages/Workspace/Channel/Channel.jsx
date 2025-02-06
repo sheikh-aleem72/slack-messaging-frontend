@@ -31,7 +31,7 @@ export const Channel = () => {
       messageContainerListRef.current.scrollTop =
         messageContainerListRef.current.scrollHeight;
     }
-  }, [messageList]);
+  }, [messageList, channelId]);
 
   // useEffect for removing cache
   useEffect(() => {
@@ -90,6 +90,7 @@ export const Channel = () => {
               body={message.body}
               authorImage={message.senderId?.avatar}
               authorName={message.senderId?.username}
+              authorId={message.senderId?._id}
               createdAt={`${date} ${time}`}
               image={message?.image}
               senderId={message?.senderId?._id}

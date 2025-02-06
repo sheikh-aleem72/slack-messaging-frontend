@@ -76,6 +76,7 @@ export const WorkspacePanel = () => {
               label={member?.memberId?.username}
               id={member?._id}
               image={member?.memberId?.avatar}
+              memberId={member?.memberId._id}
             />
           );
         })}

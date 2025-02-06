@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useCurrentWorkspace } from "@/hooks/context/useCurrentWorkspace";
 import { cn } from "@/lib/utils";
 import { MdAdminPanelSettings } from "react-icons/md";
+import { useSocket } from "@/hooks/context/useSocket";
 
 const userItemVariants = cva(
   "flex items-center gap-1.5 justify-start font-normal  px-4 mt-2 text-sm",
@@ -21,9 +22,16 @@ const userItemVariants = cva(
   }
 );
 
-export const UserItem = ({ id, label = "Member", image, variant, role }) => {
+export const UserItem = ({
+  id,
+  label = "Member",
+  image,
+  variant,
+  role,
+  memberId,
+}) => {
   const { currentWorkspace } = useCurrentWorkspace();
-
+  const { activeUsers } = useSocket();
   return (
     <Button
       className={cn(userItemVariants({ variant }))}
@@ -43,6 +51,9 @@ export const UserItem = ({ id, label = "Member", image, variant, role }) => {
           <span className="text-xs ml-auto text-gray-200">
             {<MdAdminPanelSettings />}
           </span>
+        )}
+        {activeUsers.includes(memberId) && (
+          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
         )}
       </Link>
     </Button>

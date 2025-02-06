@@ -1,19 +1,44 @@
+import { useAuth } from "@/hooks/context/useAuth";
 import { useChannelMessages } from "@/hooks/context/useChannelMessages";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 const SocketContext = createContext();
 
+const socket = io(import.meta.env.VITE_SOCKET_BACKEND_URL, {
+  autoConnect: false,
+});
+
 export const SocketContextProvider = ({ children }) => {
   const [currentChannel, setCurrentChannel] = useState(null);
+  const { auth } = useAuth();
   const { messageList, setMessageList } = useChannelMessages();
+  const [activeUsers, setActiveUsers] = useState([]);
 
-  const socket = io(import.meta.env.VITE_SOCKET_BACKEND_URL);
+  useEffect(() => {
+    if (auth?.user) {
+      socket.connect();
+      console.log("✅ Socket Connected");
 
-  socket.on("NewMessageReceived", (data) => {
-    console.log("new message Received: ", data);
+      socket.emit("userConnected", auth?.user.id); // Emiting the userConnected event
+
+      socket.on("activeUsers", (users) => {
+        setActiveUsers(users); // update active user list
+      });
+
+      return () => {
+        socket.disconnect();
+        console.log("Socket Disconnected");
+      };
+    }
+  }, [auth]); // runs only when user logs in or logout
+
+  const messageListener = (data) => {
+    console.log("📩 New Message Received:", data);
     setMessageList([...messageList, data]);
-  });
+  };
+
+  socket.on("NewMessageReceived", messageListener);
 
   async function joinChannel(channelId) {
     socket.emit("JoinChannel", { channelId }, (data) => {
@@ -27,6 +52,7 @@ export const SocketContextProvider = ({ children }) => {
         socket,
         joinChannel,
         currentChannel,
+        activeUsers,
       }}
     >
       {children}
