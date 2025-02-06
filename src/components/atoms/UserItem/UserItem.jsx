@@ -48,7 +48,7 @@ export const UserItem = ({
         </Avatar>
         <span className="text-sm truncate">{label}</span>
         {role === "admin" && (
-          <span className="text-xs ml-auto text-gray-200">
+          <span className="text-xs text-gray-200">
             {<MdAdminPanelSettings />}
           </span>
         )}
