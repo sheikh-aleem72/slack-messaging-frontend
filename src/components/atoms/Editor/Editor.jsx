@@ -6,15 +6,29 @@ import { PiTextAa } from "react-icons/pi";
 import { Hint } from "../Hint/Hint";
 import { MdSend } from "react-icons/md";
 import { ImageIcon, XIcon } from "lucide-react";
+import { useAuth } from "@/hooks/context/useAuth";
+import { useParams } from "react-router-dom";
+import { useCurrentWorkspace } from "@/hooks/context/useCurrentWorkspace";
+import { useSocket } from "@/hooks/context/useSocket";
+import { useChannelMessages } from "@/hooks/context/useChannelMessages";
 export const Editor = ({
   placeholder,
   onSubmit,
   onCancel,
   disabled,
   defaultValue,
+  socket,
 }) => {
   const [image, setImage] = useState(null);
   const [isToolbarVisible, setToolbarVisible] = useState(null);
+  const { auth } = useAuth();
+  const { channelId } = useParams();
+  const { currentWorkspace } = useCurrentWorkspace();
+  const { setTypingUsers } = useChannelMessages();
+
+  const currentUser = currentWorkspace.members.find(
+    (member) => member?.memberId._id === auth?.user.id
+  );
 
   const containerRef = useRef();
   const submitRef = useRef();
@@ -23,6 +37,7 @@ export const Editor = ({
   const quillRef = useRef();
   const placeholderRef = useRef();
   const imageRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   function toggleToolbar() {
     setToolbarVisible(!isToolbarVisible);
@@ -31,6 +46,7 @@ export const Editor = ({
       toolbar.classList.toggle("hidden");
     }
   }
+
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -76,6 +92,14 @@ export const Editor = ({
     quillRef.current.focus();
 
     quill.setContents(defaultValueRef.current);
+
+    quill.on("text-change", () => {
+      handleTyping();
+    });
+
+    return () => {
+      quill.off("text-change"); // Clean up event listener when component unmounts
+    };
   }, []);
 
   function handleSendMessage() {
@@ -93,9 +117,33 @@ export const Editor = ({
       body: messageContent,
       // image // For image upload currently not enabled because not have aws account
     });
+    setTypingUsers((prev) => {
+      (prev) => prev?.filter((u) => u._id !== auth?.user.id);
+    });
     imageRef.current.value = "";
     setImage(null);
     quillRef.current.setText("");
+  }
+
+  function handleTyping() {
+    if (!socket) return;
+
+    console.log("User started typing", channelId);
+    // Emit `typing` event to server
+    socket.emit("typing", { user: currentUser.memberId, channelId });
+
+    // Clear previous timeout (if exists)
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Emit `stopTyping` event after 3 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit("stopTyping", {
+        user: currentUser.memberId,
+        channelId,
+      });
+    }, 1000);
   }
   return (
     <div className="flex flex-col">
@@ -139,7 +187,9 @@ export const Editor = ({
             className="hidden"
             type="file"
             ref={imageRef}
-            onChange={(e) => setImage(e.target.files[0])}
+            onChange={(e) => {
+              setImage(e.target.files[0]);
+            }}
           />
           <Hint label="Image">
             <Button

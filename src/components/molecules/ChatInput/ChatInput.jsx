@@ -51,6 +51,7 @@ export const ChatInput = () => {
         onCancel={() => {}}
         disabled={false}
         defaultValue=""
+        socket={socket}
       />
     </div>
   );

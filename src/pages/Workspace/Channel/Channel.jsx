@@ -1,6 +1,11 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2Icon, TriangleAlertIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
+import {
+  Loader2Icon,
+  MoreHorizontalIcon,
+  TriangleAlertIcon,
+  TypeIcon,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { ChannelHeader } from "@/components/molecules/Channel/ChannelHeader";
@@ -10,6 +15,7 @@ import { useGetChannelById } from "@/hooks/apis/channels/useGetChannelById";
 import { useGetChannelMessages } from "@/hooks/apis/channels/useGetChannelMessages";
 import { useChannelMessages } from "@/hooks/context/useChannelMessages";
 import { useSocket } from "@/hooks/context/useSocket";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Channel = () => {
   const { channelId } = useParams();
@@ -17,21 +23,57 @@ export const Channel = () => {
   const queryClient = useQueryClient();
 
   const { channelDetails, isFetching, isError } = useGetChannelById(channelId);
-  const { setMessageList, messageList } = useChannelMessages();
+  const { setMessageList, messageList, typingUsers, setTypingUsers } =
+    useChannelMessages();
 
-  const { joinChannel } = useSocket();
+  const { joinChannel, socket } = useSocket();
 
   const { messages, isSuccess } = useGetChannelMessages(channelId);
 
   const messageContainerListRef = useRef(null);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUserTyping = ({ user, channelId: channelIdSentByServer }) => {
+      if (channelIdSentByServer !== channelId) return; // Ignore events from other channels
+
+      setTypingUsers((prev) => {
+        const isUserAlreadyTyping = prev?.some((u) => u._id === user._id);
+        if (isUserAlreadyTyping) return prev;
+        return [...prev, user];
+      });
+    };
+
+    const handleUserStoppedTyping = ({
+      user,
+      channelId: channelIdSentByServer,
+    }) => {
+      if (channelIdSentByServer !== channelId) return; // Ignore events from other channels
+
+      setTypingUsers((prev) => prev?.filter((u) => u._id !== user._id));
+    };
+
+    socket.on("userTyping", handleUserTyping);
+
+    socket.on("userStoppedTyping", handleUserStoppedTyping);
+
+    return () => {
+      socket.off("userTyping", handleUserTyping);
+      socket.off("userStoppedTyping", handleUserStoppedTyping);
+      setTypingUsers([]); // Reset typing users when switching channels
+    };
+  }, [socket, channelId]);
+
   // useEffect for showing new message first
   useEffect(() => {
     if (messageContainerListRef.current) {
-      messageContainerListRef.current.scrollTop =
-        messageContainerListRef.current.scrollHeight;
+      messageContainerListRef.current.scrollTo({
+        top: messageContainerListRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
-  }, [messageList, channelId]);
+  }, [messageList, typingUsers]);
 
   // useEffect for removing cache
   useEffect(() => {
@@ -42,6 +84,7 @@ export const Channel = () => {
   // useEffect for joining channel if channel is switched
   useEffect(() => {
     if (!isFetching && !isError) {
+      socket.emit("LeaveChannel", { channelId });
       joinChannel(channelId);
     }
   }, [isFetching, isError, joinChannel, channelId]);
@@ -52,6 +95,8 @@ export const Channel = () => {
       console.log("Channel Messages fetched", messages);
       setMessageList(messages);
     }
+
+    (prev) => prev.filter((u) => u._id !== auth?.user.id);
   }, [isSuccess, messages, setMessageList, channelId]);
 
   if (isFetching) {
@@ -90,13 +135,46 @@ export const Channel = () => {
               body={message.body}
               authorImage={message.senderId?.avatar}
               authorName={message.senderId?.username}
-              authorId={message.senderId?._id}
               createdAt={`${date} ${time}`}
               image={message?.image}
               senderId={message?.senderId?._id}
             />
           );
         })}
+        {typingUsers?.length > 0 &&
+          typingUsers.map((user) => {
+            return (
+              <div
+                key={user?._id}
+                className="flex items-center gap-2 self-start px-4"
+              >
+                <button className="self-start pt-[1px]">
+                  <Avatar>
+                    <AvatarImage
+                      src={user?.avatar}
+                      className="rounded-md bg-gray-400"
+                    />
+                    <AvatarFallback>
+                      {user?.username.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+
+                <div className="w-auto flex flex-col overflow-hidden bg-gray-200 p-1.5 px-4 rounded-sm ">
+                  <div className="text-xs mb-[1px] text-black/50 flex items-center">
+                    <button className="font-bold  hover:underline">
+                      {user?.username}
+                    </button>
+                  </div>
+                  <div className="flex items-center space-x-1 p-2">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-400"></div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
       </div>
 
       <div className="flex-1" />

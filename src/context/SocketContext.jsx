@@ -28,7 +28,7 @@ export const SocketContextProvider = ({ children }) => {
 
       return () => {
         socket.disconnect();
-        console.log("Socket Disconnected");
+        console.log("❌Socket Disconnected");
       };
     }
   }, [auth]); // runs only when user logs in or logout
