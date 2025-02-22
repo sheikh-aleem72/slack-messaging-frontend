@@ -178,7 +178,7 @@ export const Channel = () => {
       </div>
 
       <div className="flex-1" />
-      <ChatInput />
+      <ChatInput channelId={channelId} />
     </div>
   );
 };

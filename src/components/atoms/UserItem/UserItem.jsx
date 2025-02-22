@@ -8,6 +8,7 @@ import { useCurrentWorkspace } from "@/hooks/context/useCurrentWorkspace";
 import { cn } from "@/lib/utils";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { useSocket } from "@/hooks/context/useSocket";
+import { useAuth } from "@/hooks/context/useAuth";
 
 const userItemVariants = cva(
   "flex items-center gap-1.5 justify-start font-normal  px-4 mt-2 text-sm",
@@ -32,6 +33,9 @@ export const UserItem = ({
 }) => {
   const { currentWorkspace } = useCurrentWorkspace();
   const { activeUsers } = useSocket();
+  const { auth } = useAuth();
+  const isCurrentUser = memberId === auth.user.id; // Checking the member and current user are same
+
   return (
     <Button
       className={cn(userItemVariants({ variant }))}
@@ -39,7 +43,12 @@ export const UserItem = ({
       size="sm"
       asChild
     >
-      <Link to={`/workspaces/${currentWorkspace?._id}/members/${id}`}>
+      <Link
+        to={
+          !isCurrentUser &&
+          `/workspaces/${currentWorkspace?._id}/members/${memberId}`
+        }
+      >
         <Avatar>
           <AvatarImage src={image} className="rounded-md h-[35px]" />
           <AvatarFallback className="rounded-md bg-sky-500 text-white">

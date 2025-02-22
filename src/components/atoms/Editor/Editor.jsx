@@ -9,8 +9,6 @@ import { ImageIcon, XIcon } from "lucide-react";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useParams } from "react-router-dom";
 import { useCurrentWorkspace } from "@/hooks/context/useCurrentWorkspace";
-import { useSocket } from "@/hooks/context/useSocket";
-import { useChannelMessages } from "@/hooks/context/useChannelMessages";
 export const Editor = ({
   placeholder,
   onSubmit,
@@ -24,9 +22,8 @@ export const Editor = ({
   const { auth } = useAuth();
   const { channelId } = useParams();
   const { currentWorkspace } = useCurrentWorkspace();
-  const { setTypingUsers } = useChannelMessages();
 
-  const currentUser = currentWorkspace.members.find(
+  const currentUser = currentWorkspace?.members?.find(
     (member) => member?.memberId._id === auth?.user.id
   );
 
@@ -117,9 +114,6 @@ export const Editor = ({
       body: messageContent,
       // image // For image upload currently not enabled because not have aws account
     });
-    setTypingUsers((prev) => {
-      (prev) => prev?.filter((u) => u._id !== auth?.user.id);
-    });
     imageRef.current.value = "";
     setImage(null);
     quillRef.current.setText("");
@@ -130,20 +124,23 @@ export const Editor = ({
 
     console.log("User started typing", channelId);
     // Emit `typing` event to server
-    socket.emit("typing", { user: currentUser.memberId, channelId });
+    if (channelId) {
+      // Temperorily triggering typing events only if channelId is present
+      socket.emit("typing", { user: currentUser.memberId, channelId });
 
-    // Clear previous timeout (if exists)
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
+      // Clear previous timeout (if exists)
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      // Emit `stopTyping` event after 3 seconds of inactivity
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit("stopTyping", {
+          user: currentUser.memberId,
+          channelId,
+        });
+      }, 1000);
     }
-
-    // Emit `stopTyping` event after 3 seconds of inactivity
-    typingTimeoutRef.current = setTimeout(() => {
-      socket.emit("stopTyping", {
-        user: currentUser.memberId,
-        channelId,
-      });
-    }, 1000);
   }
   return (
     <div className="flex flex-col">
@@ -206,7 +203,8 @@ export const Editor = ({
           <Hint label="Send Message">
             <Button
               className="ml-auto bg-[#007a6a] hover:bg-[#007a6a]/80 text-white"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 handleSendMessage();
               }}
               disabled={false}

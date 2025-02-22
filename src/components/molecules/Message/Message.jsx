@@ -41,6 +41,7 @@ export const Message = ({
     try {
       await deleteMessageMutation();
       queryClient.invalidateQueries("getPaginatedMessages");
+      queryClient.invalidateQueries("getPrivateMessages");
       toast({
         title: "Message Deleted Successfully",
         type: "success",
