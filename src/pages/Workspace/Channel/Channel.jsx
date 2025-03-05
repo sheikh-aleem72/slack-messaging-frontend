@@ -38,7 +38,7 @@ export const Channel = () => {
     const handleUserTyping = ({ user, channelId: channelIdSentByServer }) => {
       if (channelIdSentByServer !== channelId) return; // Ignore events from other channels
 
-      setTypingUsers((prev) => {
+      setTypingUsers((prev = []) => {
         const isUserAlreadyTyping = prev?.some((u) => u._id === user._id);
         if (isUserAlreadyTyping) return prev;
         return [...prev, user];
@@ -61,7 +61,7 @@ export const Channel = () => {
     return () => {
       socket.off("userTyping", handleUserTyping);
       socket.off("userStoppedTyping", handleUserStoppedTyping);
-      setTypingUsers([]); // Reset typing users when switching channels
+      setTimeout(() => setTypingUsers([]), 100); // Slight delay to avoid flicker // Reset typing users when switching channels
     };
   }, [socket, channelId]);
 
@@ -78,16 +78,24 @@ export const Channel = () => {
   // useEffect for removing cache
   useEffect(() => {
     console.log("ChannelId", channelId);
-    queryClient.invalidateQueries("getPaginatedMessages");
+    queryClient.invalidateQueries(["getPaginatedMessages", channelId]);
   }, [channelId]);
 
   // useEffect for joining channel if channel is switched
   useEffect(() => {
-    if (!isFetching && !isError) {
-      socket.emit("LeaveChannel", { channelId });
-      joinChannel(channelId);
-    }
-  }, [isFetching, isError, joinChannel, channelId]);
+    if (!socket) return; // Ensure socket is available
+    if (isFetching || isError) return; // Wait for data to be fetched
+
+    console.log("Joining channel:", channelId);
+
+    socket.emit("LeaveChannel", { channelId }); // Leave previous channel
+    joinChannel(channelId); // Join the new channel
+
+    return () => {
+      console.log("Leaving channel:", channelId);
+      socket.emit("LeaveChannel", { channelId }); // Leave when unmounting
+    };
+  }, [socket, channelId, isFetching, isError]); // Keep necessary dependencies
 
   // useEffect for setting messages fetched from the database to messageList
   useEffect(() => {
@@ -96,7 +104,7 @@ export const Channel = () => {
       setMessageList(messages);
     }
 
-    (prev) => prev.filter((u) => u._id !== auth?.user.id);
+    setTypingUsers((prev) => prev?.filter((u) => u._id !== auth?.user.id));
   }, [isSuccess, messages, setMessageList, channelId]);
 
   if (isFetching) {
