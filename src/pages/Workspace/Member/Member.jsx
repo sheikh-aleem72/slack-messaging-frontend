@@ -27,7 +27,7 @@ export const Member = () => {
 
   const { currentWorkspace } = useCurrentWorkspace();
 
-  const { socket, joinPrivateChat } = useSocket();
+  const { socket } = useSocket();
 
   const [privateChatId, setPrivateChatId] = useState(null);
 
@@ -40,6 +40,48 @@ export const Member = () => {
 
   const { messages, isSuccess, isFetching, isError } =
     useGetPrivateMessages(memberId);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUserTyping = ({
+      user,
+      privateChatId: privateChatIdIdSentByServer,
+    }) => {
+      console.log(
+        "User typing",
+        privateChatIdIdSentByServer,
+        privateChatId,
+        privateChatIdIdSentByServer == privateChatId
+      );
+      if (privateChatIdIdSentByServer !== privateChatId) return; // Ignore events from other user
+
+      setTypingUsers((prev = []) => {
+        const isUserAlreadyTyping = prev?.some((u) => u._id === user._id);
+        if (isUserAlreadyTyping) return prev;
+        return [...prev, user];
+      });
+    };
+
+    const handleUserStoppedTyping = ({
+      user,
+      privateChatId: privateChatIdIdSentByServer,
+    }) => {
+      if (privateChatIdIdSentByServer !== privateChatId) return; // Ignore events from other user
+
+      setTypingUsers((prev) => prev?.filter((u) => u._id !== user._id));
+    };
+
+    socket.on("userTyping", handleUserTyping);
+
+    socket.on("userStoppedTyping", handleUserStoppedTyping);
+
+    return () => {
+      socket.off("userTyping", handleUserTyping);
+      socket.off("userStoppedTyping", handleUserStoppedTyping);
+      setTimeout(() => setTypingUsers([]), 100); // Slight delay to avoid flicker // Reset typing users when switching member
+    };
+  }, [socket, memberId, privateChatId]);
 
   // join private chat
   useEffect(() => {
