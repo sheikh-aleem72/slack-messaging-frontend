@@ -19,8 +19,6 @@ export const SocketContextProvider = ({ children }) => {
     setPrivateMessagesList,
   } = useChannelMessages();
   const [activeUsers, setActiveUsers] = useState([]);
-  const [currentPrivateChat, setCurrentPrivateChat] = useState(null);
-  const [currentChatType, setCurrentChatType] = useState(null);
 
   useEffect(() => {
     if (auth?.user) {
@@ -40,19 +38,6 @@ export const SocketContextProvider = ({ children }) => {
     }
   }, [auth]); // runs only when user logs in or logout
 
-  // const privateMessageListener = (data) => {
-  //   console.log("📩 New Private Message Received:", data);
-  //   setPrivateMessagesList([...privateMessagesList, data]);
-  // };
-
-  // socket.on("newPrivateMessageReceived", privateMessageListener);
-
-  // useEffect(() => {
-
-  //   return () => {
-  //     socket.off("NewMessageReceived", channelMessageListener);
-  //   };
-  // }, []);
   const channelMessageListener = (data) => {
     console.log("📩 New Message Received:", data);
     setMessageList([...messageList, data]);
@@ -64,15 +49,12 @@ export const SocketContextProvider = ({ children }) => {
     socket.emit("JoinChannel", { channelId }, (data) => {
       console.log("Successfully joined the channel", data);
       setCurrentChannel(data?.data);
-      setCurrentChatType("channelChat");
     });
   }
 
   async function joinPrivateChat(userId, otherUserId) {
     socket.emit("joinPrivateChat", { userId, otherUserId }, (data) => {
       console.log("Successfully joined the private chat", data);
-      setCurrentPrivateChat(data?.data);
-      setCurrentChatType("privateChat");
     });
   }
   return (
@@ -83,9 +65,6 @@ export const SocketContextProvider = ({ children }) => {
         currentChannel,
         activeUsers,
         joinPrivateChat,
-        currentPrivateChat,
-        currentChatType,
-        setCurrentChatType,
       }}
     >
       {children}

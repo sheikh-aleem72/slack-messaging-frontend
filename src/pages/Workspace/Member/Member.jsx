@@ -15,6 +15,7 @@ import { useSocket } from "@/hooks/context/useSocket";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useGetPrivateMessages } from "@/hooks/apis/privateChat/useGetPrivateMessages";
+import { useCurrentWorkspace } from "@/hooks/context/useCurrentWorkspace";
 
 export const Member = () => {
   const { memberId } = useParams();
@@ -24,7 +25,11 @@ export const Member = () => {
 
   const { auth } = useAuth();
 
-  const { socket, joinPrivateChat, currentPrivateChat } = useSocket();
+  const { currentWorkspace } = useCurrentWorkspace();
+
+  const { socket, joinPrivateChat } = useSocket();
+
+  const [privateChatId, setPrivateChatId] = useState(null);
 
   const {
     typingUsers,
@@ -33,41 +38,64 @@ export const Member = () => {
     setTypingUsers,
   } = useChannelMessages();
 
-  const { messages, isSuccess, isFetching } = useGetPrivateMessages(memberId);
+  const { messages, isSuccess, isFetching, isError } =
+    useGetPrivateMessages(memberId);
 
   // join private chat
   useEffect(() => {
-    socket.emit("leavePrivateChat", { currentPrivateChat });
-    joinPrivateChat(auth?.user?.id, memberId);
-  }, [
-    memberId,
-    joinPrivateChat,
-    isSuccess,
-    privateMessagesList,
-    setPrivateMessagesList,
-    currentPrivateChat,
-  ]);
+    if (!socket || isFetching || isError) return;
+
+    socket.emit("leavePrivateChat", {
+      userId: auth?.user.id,
+      otherUserId: memberId,
+    });
+
+    socket.emit(
+      "joinPrivateChat",
+      { userId: auth?.user?.id, otherUserId: memberId },
+      (data) => {
+        console.log("Successfully joined the private chat", data);
+        setPrivateChatId(data.data);
+      }
+    );
+
+    return () => {
+      socket.emit("leavePrivateChat", {
+        userId: auth?.user.id,
+        otherUserId: memberId,
+      });
+    };
+  }, [socket, isFetching, memberId]);
 
   // useEffect for showing new message first
   useEffect(() => {
     if (messageContainerListRef.current) {
-      messageContainerListRef.current.scrollTo({
-        top: messageContainerListRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+      setTimeout(() => {
+        messageContainerListRef.current.scrollTo({
+          top: messageContainerListRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 100);
     }
   }, [privateMessagesList, typingUsers]);
 
   // useEffect for removing cache
   useEffect(() => {
-    queryClient.invalidateQueries(["getPrivateMessages", memberId]);
-  }, [memberId]);
+    if (isSuccess) {
+      queryClient.invalidateQueries(["getPrivateMessages", memberId]);
+    }
+  }, [isSuccess, queryClient, memberId]);
 
   // Listening to message receving event
   useEffect(() => {
+    if (!privateChatId) return; // Ensure privateChatId is set before adding the listener
+
     const privateMessageListener = (data) => {
       console.log("📩 New Private Message Received:", data);
-      setPrivateMessagesList([...privateMessagesList, data]);
+
+      if (data.privateChatId === privateChatId) {
+        setPrivateMessagesList((prev) => [...prev, data]);
+      }
     };
 
     socket.on("newPrivateMessageReceived", privateMessageListener);
@@ -75,7 +103,7 @@ export const Member = () => {
     return () => {
       socket.off("newPrivateMessageReceived", privateMessageListener);
     };
-  }, []);
+  }, [privateChatId]);
 
   // useEffect for getting messages
   useEffect(() => {
@@ -83,13 +111,7 @@ export const Member = () => {
       setPrivateMessagesList(messages);
       console.log("Messages: ", privateMessagesList);
     }
-  }, [
-    isSuccess,
-    privateMessagesList,
-    setPrivateMessagesList,
-    memberId,
-    currentPrivateChat,
-  ]);
+  }, [isSuccess, memberId, messages]);
 
   if (isFetching) {
     return (
@@ -101,6 +123,28 @@ export const Member = () => {
 
   return (
     <div className="flex flex-col h-full bg-slack-darklight rounded-md">
+      <div className="px-5 py-2 bg-white/40 rounded-lg border cursor-pointer hover:bg-gray-100">
+        {currentWorkspace?.members?.map((member) => {
+          if (member?.memberId._id === memberId) {
+            return (
+              <div
+                className="flex items-center gap-3"
+                key={member?.memberId._id}
+              >
+                <div className="bg-white rounded-full">
+                  <img src={member?.memberId.avatar} className="w-[40px] p-1" />
+                </div>
+                <p
+                  key={member?.memberId?._id}
+                  className="text-lg text-left font-bold"
+                >
+                  {member?.memberId.username}
+                </p>
+              </div>
+            );
+          }
+        })}
+      </div>
       {/* We need to make sure that below div is scrollable for the messages */}
       <div
         ref={messageContainerListRef}
@@ -111,7 +155,7 @@ export const Member = () => {
           const date = new Date(message.createdAt).toLocaleDateString();
           return (
             <Message
-              key={message._id}
+              key={`${memberId}-${message._id}`}
               messageId={message._id}
               body={message.body}
               authorImage={message.senderId?.avatar}

@@ -10,8 +10,7 @@ export const ChatInput = () => {
   const { memberId } = useParams();
   const { auth } = useAuth();
   const { currentWorkspace } = useCurrentWorkspace();
-  const { socket, currentChannel, currentPrivateChat, currentChatType } =
-    useSocket();
+  const { socket, currentChannel } = useSocket();
 
   async function handleSubmit({ body, image }) {
     console.log(body, image);
@@ -37,7 +36,6 @@ export const ChatInput = () => {
       */
     }
 
-    console.log("Current chat type: ", currentChatType);
     if (channelId) {
       socket?.emit(
         "NewMessage",
