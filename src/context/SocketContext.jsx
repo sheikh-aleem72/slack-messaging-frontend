@@ -52,11 +52,6 @@ export const SocketContextProvider = ({ children }) => {
     });
   }
 
-  async function joinPrivateChat(userId, otherUserId) {
-    socket.emit("joinPrivateChat", { userId, otherUserId }, (data) => {
-      console.log("Successfully joined the private chat", data);
-    });
-  }
   return (
     <SocketContext.Provider
       value={{
@@ -64,7 +59,6 @@ export const SocketContextProvider = ({ children }) => {
         joinChannel,
         currentChannel,
         activeUsers,
-        joinPrivateChat,
       }}
     >
       {children}

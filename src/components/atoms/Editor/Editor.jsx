@@ -22,6 +22,7 @@ export const Editor = ({
   const { auth } = useAuth();
   const { channelId } = useParams();
   const { currentWorkspace } = useCurrentWorkspace();
+  const { memberId } = useParams();
 
   const currentUser = currentWorkspace?.members?.find(
     (member) => member?.memberId._id === auth?.user.id
@@ -122,10 +123,8 @@ export const Editor = ({
   function handleTyping() {
     if (!socket) return;
 
-    console.log("User started typing", channelId);
     // Emit `typing` event to server
     if (channelId) {
-      // Temperorily triggering typing events only if channelId is present
       socket.emit("typing", { user: currentUser.memberId, channelId });
 
       // Clear previous timeout (if exists)
@@ -138,6 +137,21 @@ export const Editor = ({
         socket.emit("stopTyping", {
           user: currentUser.memberId,
           channelId,
+        });
+      }, 1000);
+    } else if (memberId) {
+      socket.emit("typing", { user: currentUser.memberId, memberId });
+
+      // Clear previous timeout (if exists)
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      // Emit `stopTyping` event after 3 seconds of inactivity
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit("stopTyping", {
+          user: currentUser.memberId,
+          memberId,
         });
       }, 1000);
     }
