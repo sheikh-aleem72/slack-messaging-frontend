@@ -5,10 +5,14 @@ import { Button } from "@/components/ui/button";
 import { PiTextAa } from "react-icons/pi";
 import { Hint } from "../Hint/Hint";
 import { MdSend } from "react-icons/md";
-import { ImageIcon, XIcon } from "lucide-react";
+import { ImageIcon, Loader2, XIcon } from "lucide-react";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useParams } from "react-router-dom";
 import { useCurrentWorkspace } from "@/hooks/context/useCurrentWorkspace";
+import axiosConfig from "@/config/axiosConfig";
+import axios from "axios";
+import { useGetPresignedUrl } from "@/hooks/apis/cloudinary/useGetPresignedUrl";
+import { useUploadImageToCloudinary } from "@/hooks/apis/cloudinary/useUploadImageToCloudinary";
 export const Editor = ({
   placeholder,
   onSubmit,
@@ -18,11 +22,16 @@ export const Editor = ({
   socket,
 }) => {
   const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [isToolbarVisible, setToolbarVisible] = useState(null);
   const { auth } = useAuth();
   const { channelId } = useParams();
   const { currentWorkspace } = useCurrentWorkspace();
   const { memberId } = useParams();
+  const { getPreSignedUrlMutation } = useGetPresignedUrl();
+  const { uploadImageToCloudinarypresignedUrlMutation } =
+    useUploadImageToCloudinary();
 
   const currentUser = currentWorkspace?.members?.find(
     (member) => member?.memberId._id === auth?.user.id
@@ -36,6 +45,7 @@ export const Editor = ({
   const placeholderRef = useRef();
   const imageRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+  const abortController = useRef(null);
 
   function toggleToolbar() {
     setToolbarVisible(!isToolbarVisible);
@@ -156,28 +166,104 @@ export const Editor = ({
       }, 1000);
     }
   }
+
+  async function handleImageUpload(file) {
+    if (!file) return;
+    setUploading(true);
+    setImage(file);
+    abortController.current = new AbortController();
+
+    try {
+      const presignedUrlData = await getPreSignedUrlMutation();
+
+      const { uploadUrl, signature, timestamp, apiKey, folder } =
+        presignedUrlData;
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("api_key", apiKey);
+      formData.append("timestamp", timestamp);
+      formData.append("signature", signature);
+      formData.append("folder", folder);
+
+      const response = await uploadImageToCloudinarypresignedUrlMutation({
+        URL: uploadUrl,
+        formData,
+        config: { signal: abortController.current.signal },
+      });
+
+      setImageUrl(response?.secure_url);
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Image upload canceled");
+      } else {
+        console.error("Image upload failed", error);
+      }
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function handleSendMessage() {
+    const message = quillRef.current?.getText().trim();
+    if (!message && !imageUrl) return;
+
+    const messageContent = JSON.stringify(quillRef.current?.getContents());
+    onSubmit({ body: messageContent, image: imageUrl });
+    setImage(null);
+    setImageUrl(null);
+    quillRef.current.setText("");
+  }
+
+  function handleTyping() {
+    if (!socket) return;
+    const payload = { user: currentUser.memberId };
+    if (channelId) payload.channelId = channelId;
+    if (memberId) payload.memberId = memberId;
+    socket.emit("typing", payload);
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit("stopTyping", payload);
+    }, 1000);
+  }
+
+  function cancelUpload() {
+    if (abortController.current) {
+      abortController.current.abort();
+      setImage(null);
+      setImageUrl(null);
+    }
+  }
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-col border border-slate-300 rounded-md overflow-hidden focus-within:shadow-sm focus-within:border-slate-400 bg-white ">
         <div className="h-full ql-custom" ref={containerRef} />
-
         {image && (
           <div className="p-2">
             <div className="relative size-[60px] flex items-center justify-center group/image">
               <button
                 className="hidden group-hover/image:flex rounded-full bg-black/70 hover:bg-black absolute -top-2.5 -right-2.5 text-white size-6 z-[5] border-2 border-white items-center justify-center"
-                onClick={() => {
-                  setImage(null);
-                  imageRef.current.value = "";
-                }}
+                onClick={cancelUpload}
               >
                 <XIcon className="size-4" />
               </button>
 
+              {/* Image Preview */}
               <img
                 src={URL.createObjectURL(image)}
-                className="rounded-xl overflow-hidden border object-cover"
+                className={`rounded-xl border object-cover w-full h-full transition ${
+                  uploading ? "blur-sm opacity-50" : "blur-0 opacity-100"
+                }`}
               />
+
+              {/* Loader Overlay while uploading */}
+              {uploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl">
+                  <Loader2 className="size-6 animate-spin text-white" />
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -199,7 +285,7 @@ export const Editor = ({
             type="file"
             ref={imageRef}
             onChange={(e) => {
-              setImage(e.target.files[0]);
+              handleImageUpload(e.target.files[0]);
             }}
           />
           <Hint label="Image">
@@ -221,7 +307,7 @@ export const Editor = ({
                 e.preventDefault();
                 handleSendMessage();
               }}
-              disabled={false}
+              disabled={uploading}
             >
               <MdSend className="size-4" />
             </Button>

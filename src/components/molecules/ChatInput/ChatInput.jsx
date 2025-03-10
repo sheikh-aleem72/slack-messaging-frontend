@@ -15,27 +15,9 @@ export const ChatInput = () => {
   async function handleSubmit({ body, image }) {
     console.log(body, image);
 
-    let fileUrl = null;
-    if (image) {
-      /*
-      // Logic for image sharing in chat using aws presigned url
-      const preSignedUrl = await queryClient.fetchQuery({
-        queryKey: ["getPresignedUrl"],
-        queryFn: () => getPreginedUrl({ token: auth?.token }),
-      });
+    let fileUrl = image;
 
-      console.log("Presigned url", preSignedUrl);
-
-      const responseAws = await uploadImageToAWSpresignedUrl({
-        url: preSignedUrl,
-        file: image,
-      });
-      console.log("file upload success", responseAws);
-      fileUrl = preSignedUrl.split("?")[0];
-
-      */
-    }
-
+    // logic for image sharing using cloudinary.
     if (channelId) {
       socket?.emit(
         "NewMessage",
