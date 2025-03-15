@@ -23,6 +23,9 @@ export const SigninCard = ({
   onSigninFormSubmit,
 }) => {
   const navigate = useNavigate();
+  if (error) {
+    console.log(error);
+  }
   return (
     <Card className="h-auto w-[420px]">
       <CardHeader>

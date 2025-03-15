@@ -44,11 +44,13 @@ export const CreateChannelModal = () => {
       });
     } catch (error) {
       console.log("Error while creating channel");
+
       setOpenCreateChannelModal(false);
       toast({
         title: `${error?.message}`,
         type: "failed",
       });
+      throw error;
     }
   }
 

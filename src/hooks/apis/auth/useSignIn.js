@@ -42,6 +42,7 @@ export const useSignIn = () => {
         type: "error",
         variant: "destructive",
       });
+      throw error;
     },
   });
 

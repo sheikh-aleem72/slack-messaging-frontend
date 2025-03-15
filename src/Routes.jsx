@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import SignupContainer from "./components/organism/auth/SignupContainer";
 import { Auth } from "./pages/Auth/Auth";
 import { SigninContainer } from "./components/organism/auth/SigninContainer";
@@ -10,10 +10,12 @@ import { JoinPage } from "./pages/Workspace/JoinPage";
 import { Channel } from "./pages/Workspace/Channel/Channel";
 import { WorkspacePage } from "./components/organism/Workspace/WorkspacePage";
 import { Member } from "./pages/Workspace/Member/Member";
+import { TestComponent } from "./components/atoms/TestComponent/TestComponent";
 
 export const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to={"/auth/signin"} />} />
       <Route
         path="/auth/signup"
         element={
@@ -70,6 +72,7 @@ export const AppRoutes = () => {
       />
       <Route path="/workspaces/join/:workspaceId" element={<JoinPage />} />
       <Route path="/*" element={<NotFound />} />
+      <Route path="/test-error" element={<TestComponent />} />
     </Routes>
   );
 };

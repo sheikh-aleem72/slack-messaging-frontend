@@ -52,6 +52,7 @@ export const Message = ({
         title: error?.message,
         type: "failed",
       });
+      throw error;
     }
   }
   return (

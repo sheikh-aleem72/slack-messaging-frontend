@@ -40,6 +40,7 @@ export const WorkspaceInvitationModal = ({
       });
     } catch (error) {
       console.log("Error while reseting joincode", error);
+      throw error;
     }
   }
 
