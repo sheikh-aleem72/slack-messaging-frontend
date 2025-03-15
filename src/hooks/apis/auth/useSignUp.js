@@ -27,6 +27,7 @@ export const useSignup = () => {
         type: "error",
         variant: "destructive",
       });
+      throw error;
     },
   });
   return {

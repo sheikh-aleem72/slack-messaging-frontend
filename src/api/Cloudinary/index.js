@@ -15,6 +15,7 @@ export const uploadImageToCloudinarypresignedUrl = async (
     return response.data;
   } catch (error) {
     console.error("Error uploading image to AWS", error);
+    throw error;
   }
 };
 
@@ -28,5 +29,6 @@ export const getPresignedUrl = async ({ token }) => {
     return response?.data;
   } catch (error) {
     console.log("Error in getting presigned url", error);
+    throw error;
   }
 };

@@ -10,6 +10,7 @@ import { JoinPage } from "./pages/Workspace/JoinPage";
 import { Channel } from "./pages/Workspace/Channel/Channel";
 import { WorkspacePage } from "./components/organism/Workspace/WorkspacePage";
 import { Member } from "./pages/Workspace/Member/Member";
+import { TestComponent } from "./components/atoms/TestComponent/TestComponent";
 
 export const AppRoutes = () => {
   return (
@@ -70,6 +71,7 @@ export const AppRoutes = () => {
       />
       <Route path="/workspaces/join/:workspaceId" element={<JoinPage />} />
       <Route path="/*" element={<NotFound />} />
+      <Route path="/test-error" element={<TestComponent />} />
     </Routes>
   );
 };

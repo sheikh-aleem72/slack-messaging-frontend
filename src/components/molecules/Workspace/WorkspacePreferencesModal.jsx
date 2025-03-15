@@ -73,6 +73,7 @@ export const WorkspacePreferencesModal = () => {
         title: "Error in deleting workspace",
         type: "failed",
       });
+      throw error;
     }
   }
 
@@ -96,6 +97,7 @@ export const WorkspacePreferencesModal = () => {
         title: "Error in updating workspace",
         type: "failed",
       });
+      throw error;
     }
   }
 

@@ -57,6 +57,7 @@ export const AddMemberModal = () => {
         title: error.message,
         type: "failed",
       });
+      throw error;
     }
   }
   return (

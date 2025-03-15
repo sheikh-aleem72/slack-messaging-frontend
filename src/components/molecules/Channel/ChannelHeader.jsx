@@ -61,6 +61,7 @@ export const ChannelHeader = ({ name }) => {
         title: "Error while renaming channel",
         type: "error",
       });
+      throw error;
     }
   }
 
@@ -82,6 +83,7 @@ export const ChannelHeader = ({ name }) => {
         title: "Error while deleting channel",
         type: "error",
       });
+      throw error;
     }
   }
   return (

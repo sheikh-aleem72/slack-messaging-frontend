@@ -11,6 +11,7 @@ export const getChannelByIdRequest = async ({ token, channelId }) => {
     return response?.data?.data;
   } catch (error) {
     console.log("Error from getChannelByIdRequest: ", error);
+    throw error;
   }
 };
 
@@ -34,6 +35,7 @@ export const getPaginatedMessages = async ({
     return response?.data?.data;
   } catch (error) {
     console.log("Error in getPaginatedMessagesRequest", error);
+    throw error;
   }
 };
 
@@ -51,6 +53,7 @@ export const updateChannelRequest = async ({ token, channelId, name }) => {
     return response?.data?.data;
   } catch (error) {
     console.log("Error from updateChannelRequest: ", error);
+    throw error;
   }
 };
 
@@ -65,6 +68,7 @@ export const deleteChannelRequest = async ({ token, channelId }) => {
     return response?.data?.data;
   } catch (error) {
     console.log("Error while deleting channel at deleteChannelRequest", error);
+    throw error;
   }
 };
 
@@ -79,5 +83,6 @@ export const deleteMessageRequest = async ({ token, messageId }) => {
     return response?.data?.data;
   } catch (error) {
     console.log("Error from deleteMessageRequest: ", error);
+    throw error;
   }
 };

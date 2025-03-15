@@ -23,6 +23,7 @@ export const JoinPage = () => {
       navigate(`/workspaces/${workspaceId}`);
     } catch (error) {
       console.log("Error while adding member to workspace");
+      throw error;
     }
   }
 
