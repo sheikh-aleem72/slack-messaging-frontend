@@ -48,12 +48,12 @@ export const Member = () => {
       user,
       privateChatId: privateChatIdIdSentByServer,
     }) => {
-      console.log(
-        "User typing",
-        privateChatIdIdSentByServer,
-        privateChatId,
-        privateChatIdIdSentByServer == privateChatId
-      );
+      // console.log(
+      //   "User typing",
+      //   privateChatIdIdSentByServer,
+      //   privateChatId,
+      //   privateChatIdIdSentByServer == privateChatId
+      // );
       if (privateChatIdIdSentByServer !== privateChatId) return; // Ignore events from other user
 
       setTypingUsers((prev = []) => {
@@ -96,7 +96,7 @@ export const Member = () => {
       "joinPrivateChat",
       { userId: auth?.user?.id, otherUserId: memberId },
       (data) => {
-        console.log("Successfully joined the private chat", data);
+        // console.log("Successfully joined the private chat", data);
         setPrivateChatId(data.data);
       }
     );
@@ -133,7 +133,7 @@ export const Member = () => {
     if (!privateChatId) return; // Ensure privateChatId is set before adding the listener
 
     const privateMessageListener = (data) => {
-      console.log("📩 New Private Message Received:", data);
+      // console.log("📩 New Private Message Received:", data);
 
       if (data.privateChatId === privateChatId) {
         setPrivateMessagesList((prev) => [...prev, data]);
@@ -151,7 +151,7 @@ export const Member = () => {
   useEffect(() => {
     if (isSuccess) {
       setPrivateMessagesList(messages);
-      console.log("Messages: ", privateMessagesList);
+      // console.log("Messages: ", privateMessagesList);
     }
   }, [isSuccess, memberId, messages]);
 

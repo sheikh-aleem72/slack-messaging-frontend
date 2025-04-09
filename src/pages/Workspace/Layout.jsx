@@ -7,13 +7,13 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useGetWorkspaceById } from "@/hooks/apis/workspaces/useGetWorkspaceById";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export const WorkspaceLayout = ({ children }) => {
   const { workspaceId } = useParams();
   const { isFetching, isSuccess, error, workspace } =
     useGetWorkspaceById(workspaceId);
-
   return (
     <div className="h-[100vh] px-[.5px]">
       <div>

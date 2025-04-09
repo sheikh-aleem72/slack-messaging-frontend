@@ -17,7 +17,7 @@ export const SigninContainer = () => {
 
   async function onSigninFormSubmit(e) {
     e.preventDefault();
-    console.log("Signed in form submitted successfully", signinForm);
+    // console.log("Signed in form submitted successfully", signinForm);
 
     if (!signinForm.email || !signinForm.password) {
       console.log("All fields are required");

@@ -22,7 +22,7 @@ export const getPaginatedMessages = async ({
   token,
 }) => {
   try {
-    console.log("Fetching messages");
+    // console.log("Fetching messages");
     const response = await axios.get(`/messages/${channelId}`, {
       params: {
         limit: limit || 20,

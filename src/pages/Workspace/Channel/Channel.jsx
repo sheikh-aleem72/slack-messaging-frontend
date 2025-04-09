@@ -77,7 +77,7 @@ export const Channel = () => {
 
   // useEffect for removing cache
   useEffect(() => {
-    console.log("ChannelId", channelId);
+    // console.log("ChannelId", channelId);
     queryClient.invalidateQueries(["getPaginatedMessages", channelId]);
   }, [channelId]);
 
@@ -86,13 +86,13 @@ export const Channel = () => {
     if (!socket) return; // Ensure socket is available
     if (isFetching || isError) return; // Wait for data to be fetched
 
-    console.log("Joining channel:", channelId);
+    // console.log("Joining channel:", channelId);
 
     socket.emit("LeaveChannel", { channelId }); // Leave previous channel
     joinChannel(channelId); // Join the new channel
 
     return () => {
-      console.log("Leaving channel:", channelId);
+      // console.log("Leaving channel:", channelId);
       socket.emit("LeaveChannel", { channelId }); // Leave when unmounting
     };
   }, [socket, channelId, isFetching, isError]); // Keep necessary dependencies
@@ -100,7 +100,7 @@ export const Channel = () => {
   // useEffect for setting messages fetched from the database to messageList
   useEffect(() => {
     if (isSuccess) {
-      console.log("Channel Messages fetched", messages);
+      // console.log("Channel Messages fetched", messages);
       setMessageList(messages);
     }
 

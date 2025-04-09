@@ -46,6 +46,7 @@ export const Editor = ({
   const imageRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const abortController = useRef(null);
+  const ignoreNextTextChange = useRef(false);
 
   function toggleToolbar() {
     setToolbarVisible(!isToolbarVisible);
@@ -121,17 +122,37 @@ export const Editor = ({
 
     const messageContent = JSON.stringify(quillRef.current?.getContents());
 
+    if (socket) {
+      const payload = { user: currentUser.memberId };
+      if (channelId) payload.channelId = channelId;
+      if (memberId) payload.memberId = memberId;
+      socket.emit("stopTyping", payload);
+    }
     onSubmit({
       body: messageContent,
       // image // For image upload currently not enabled because not have aws account
     });
+
+    // Prevent `text-change` from triggering `handleTyping`
+    ignoreNextTextChange.current = true;
+
+    quillRef.current.setText("");
     imageRef.current.value = "";
     setImage(null);
-    quillRef.current.setText("");
+
+    // Clear any pending typing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Reset after a short delay (so next typing event is detected properly)
+    setTimeout(() => {
+      ignoreNextTextChange.current = false;
+    }, 300);
   }
 
   function handleTyping() {
-    if (!socket) return;
+    if (!socket || ignoreNextTextChange.current) return;
 
     // Emit `typing` event to server
     if (channelId) {
@@ -148,7 +169,7 @@ export const Editor = ({
           user: currentUser.memberId,
           channelId,
         });
-      }, 1000);
+      }, 3000);
     } else if (memberId) {
       socket.emit("typing", { user: currentUser.memberId, memberId });
 
@@ -163,7 +184,7 @@ export const Editor = ({
           user: currentUser.memberId,
           memberId,
         });
-      }, 1000);
+      }, 3000);
     }
   }
 
