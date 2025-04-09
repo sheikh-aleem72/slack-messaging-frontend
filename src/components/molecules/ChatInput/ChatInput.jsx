@@ -13,11 +13,10 @@ export const ChatInput = () => {
   const { socket, currentChannel } = useSocket();
 
   async function handleSubmit({ body, image }) {
-    console.log(body, image);
+    // console.log(body, image);
 
     let fileUrl = image;
 
-    // logic for image sharing using cloudinary.
     if (channelId) {
       socket?.emit(
         "NewMessage",
@@ -29,7 +28,7 @@ export const ChatInput = () => {
           workspaceId: currentWorkspace,
         },
         (data) => {
-          console.log("Message Sent", data);
+          // console.log("Message Sent", data);
         }
       );
     } else if (memberId) {
@@ -42,10 +41,10 @@ export const ChatInput = () => {
           receiverId: memberId,
         },
         (data) => {
-          console.log("Private Message Sent", data);
+          // console.log("Private Message Sent", data);
         }
       );
-      console.log("Private message sent successfully");
+      // console.log("Private message sent successfully");
     }
   }
 

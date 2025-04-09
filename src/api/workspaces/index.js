@@ -12,7 +12,7 @@ export const createWorkspaceRequest = async ({ name, descripton, token }) => {
       }
     );
 
-    console.log("Repsonse from create workspace api: ", response);
+    // console.log("Repsonse from create workspace api: ", response);
 
     return response?.data?.data;
   } catch (error) {
@@ -44,7 +44,7 @@ export const fetchWorkspaceByIdRequest = async ({ token, workspaceId }) => {
       },
     });
 
-    console.log("Response from fetchWorkspaceById: ", response?.data?.data);
+    // console.log("Response from fetchWorkspaceById: ", response?.data?.data);
 
     return response?.data?.data;
   } catch (error) {
@@ -61,10 +61,10 @@ export const deleteWorkspaceRequest = async ({ token, workspaceId }) => {
       },
     });
 
-    console.log(
-      "Response from delete workspace api request: ",
-      response?.data?.data
-    );
+    // console.log(
+    //   "Response from delete workspace api request: ",
+    //   response?.data?.data
+    // );
 
     return response?.data?.data;
   } catch (error) {
@@ -85,10 +85,10 @@ export const updateWorkspaceRequest = async ({ token, name, workspaceId }) => {
       }
     );
 
-    console.log(
-      "Response from update workspace api request: ",
-      response?.data?.data
-    );
+    // console.log(
+    //   "Response from update workspace api request: ",
+    //   response?.data?.data
+    // );
 
     return response?.data?.data;
   } catch (error) {
@@ -113,7 +113,7 @@ export const createChannelRequest = async ({
       }
     );
 
-    console.log("Response from add channel to workspace: ", response);
+    // console.log("Response from add channel to workspace: ", response);
 
     return response?.data?.data;
   } catch (error) {
@@ -134,10 +134,10 @@ export const resestJoinCodeRequest = async ({ token, workspaceId }) => {
       }
     );
 
-    console.log(
-      "Response from update joincode api request: ",
-      response?.data?.data
-    );
+    // console.log(
+    //   "Response from update joincode api request: ",
+    //   response?.data?.data
+    // );
 
     return response?.data?.data;
   } catch (error) {
@@ -162,7 +162,7 @@ export const joinWorkspaceRequest = async ({
       }
     );
 
-    console.log("Response from join workspace request: ", response?.data?.data);
+    // console.log("Response from join workspace request: ", response?.data?.data);
 
     return response?.data?.data;
   } catch (error) {
@@ -187,10 +187,10 @@ export const addMemberToWorkspaceUsingMailRequest = async ({
       }
     );
 
-    console.log(
-      "Response from add member to workspace using mail request: ",
-      response?.data?.data
-    );
+    // console.log(
+    //   "Response from add member to workspace using mail request: ",
+    //   response?.data?.data
+    // );
 
     return response?.data?.data;
   } catch (error) {

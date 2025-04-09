@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
 
   if (auth.isLoading) {
     return (
-      <div>
+      <div className="flex h-screen justify-center items-center">
         <LucideLoader2 className="animate-spin ml-2" />
         Loading...
       </div>

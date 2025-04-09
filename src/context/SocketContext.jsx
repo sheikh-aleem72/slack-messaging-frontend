@@ -39,7 +39,7 @@ export const SocketContextProvider = ({ children }) => {
   }, [auth]); // runs only when user logs in or logout
 
   const channelMessageListener = (data) => {
-    console.log("📩 New Message Received:", data);
+    // console.log("📩 New Message Received:", data);
     setMessageList([...messageList, data]);
   };
 
@@ -47,7 +47,7 @@ export const SocketContextProvider = ({ children }) => {
 
   async function joinChannel(channelId) {
     socket.emit("JoinChannel", { channelId }, (data) => {
-      console.log("Successfully joined the channel", data);
+      // console.log("Successfully joined the channel", data);
       setCurrentChannel(data?.data);
     });
   }
