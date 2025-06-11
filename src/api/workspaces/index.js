@@ -23,12 +23,14 @@ export const createWorkspaceRequest = async ({ name, descripton, token }) => {
 
 export const fetchWorkspaceRequest = async ({ token }) => {
   try {
+    console.log("Reached!!");
     const response = await axios.get("/workspace", {
       headers: {
         "x-access-token": token,
       },
     });
 
+    console.log("API called. response - ", response?.data);
     return response?.data?.data;
   } catch (error) {
     console.log("Error in fetchWorkspaceRequest", error);

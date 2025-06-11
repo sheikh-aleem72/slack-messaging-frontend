@@ -32,6 +32,7 @@ export const ChatInput = () => {
         }
       );
     } else if (memberId) {
+      console.log("Message received from member - ", body);
       socket?.emit(
         "sendPrivateMessage",
         {
